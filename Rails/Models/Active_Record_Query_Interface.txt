@@ -1,0 +1,1349 @@
+--------------------------------------------------- Active Record Query Interface --------------------------------------------------
+
+ -> Active Record will perform queries on the database for you and is compatible with most database systems, including MySQL, MariaDB,
+    PostgreSQL, and SQLite. Regardless of which database system you're using, the Active Record method format will always be the same.
+    
+ 1). Retrieving Objects from the Database.
+ -> To retrieve objects from the database, Active Record provides several finder methods. 
+ -> Each finder method allows you to pass arguments into it to perform certain queries on your database without writing raw SQL.
+
+     a). Retrieving a Single Object :-
+	-> Active Record provides several different ways of retrieving a single object.
+	
+	*). find :- can retrieve the object corresponding to the specified primary key that matches any supplied options.
+	
+		eg:- 3.2.1 :001 > Book.find(1)           #find using id
+                                 
+			 id: 1,                                                     
+			 name: "Harry potter",                                      
+			 book_type: "fiction",                                      
+			 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+			 updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00> 
+			 
+		     3.2.1 :002 > Book.find([1,3])      #find two books using id
+						        
+			  id: 1,                                                    
+			  name: "Harry potter",                                     
+			  book_type: "fiction",                                     
+			  created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00>,
+			
+			  id: 3,
+			  name: "And Then There Were None",
+			  book_type: "Mystery",
+			  created_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00>] 
+		
+	*). take :- The take method retrieves a record without any implicit ordering.  # (bang version take!)
+	 
+	 	eg:-  3.2.1 :004 > Book.take                                
+			 id: 1,                                                     
+			 name: "Harry potter",                                      
+			 book_type: "fiction",                                      
+			 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+			 updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00> 
+			 
+		      3.2.1 :005 > Book.take(2)                              
+			  id: 1,                                                    
+			  name: "Harry potter",                                     
+			  book_type: "fiction",                                     
+			  created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00>,
+
+			  id: 2,
+			  name: "The Hobbit ",
+			  book_type: "Fantasy",
+			  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>] 
+	
+	*). first :- The first method finds the first record ordered by primary key (default).  # (bang version first!)
+	
+		eg:-  3.2.1 :007 > Author.first                                  
+			 id: 1,                                                       
+			 name: "JK Rowling",                                          
+			 book_id: 1,                                                  
+			 created_at: Thu, 30 Mar 2023 08:57:18.310960000 UTC +00:00,  
+			 updated_at: Thu, 30 Mar 2023 08:57:18.310960000 UTC +00:00>  
+			 
+		      3.2.1 :008 > Author.first(2)                                
+			  id: 1,                                                      
+			  name: "JK Rowling",                                         
+			  book_id: 1,                                                 
+			  created_at: Thu, 30 Mar 2023 08:57:18.310960000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:57:18.310960000 UTC +00:00>,
+			 #<Author:0x00007fc7bb1f0470
+			  id: 2,
+			  name: "JRR Tolkien",
+			  book_id: 2,
+			  created_at: Thu, 30 Mar 2023 09:03:00.244777000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 09:03:00.244777000 UTC +00:00>] 
+	
+	*). last :- The last method finds the last record ordered by primary key (default).  # (bang version last!)
+	
+		eg:-  3.2.1 :009 > Author.last                                 
+			 id: 6,                                                       
+			 name: "Charles Dickens",                                     
+			 book_id: 3,                                                  
+			 created_at: Thu, 30 Mar 2023 09:03:00.262260000 UTC +00:00,  
+			 updated_at: Thu, 30 Mar 2023 09:03:00.262260000 UTC +00:00>  
+			 
+		      3.2.1 :010 > Author.last(2)                                 
+			  id: 5,                                                      
+			  name: "Charles Dickens",                                    
+			  book_id: 5,                                                 
+			  created_at: Thu, 30 Mar 2023 09:03:00.257843000 UTC +00:00, 
+			  updated_at: Thu, 30 Mar 2023 09:03:00.257843000 UTC +00:00>,
+						      
+			  id: 6,                                                      
+			  name: "Charles Dickens",                                    
+			  book_id: 3,                                                 
+			  created_at: Thu, 30 Mar 2023 09:03:00.262260000 UTC +00:00, 
+			  updated_at: Thu, 30 Mar 2023 09:03:00.262260000 UTC +00:00>] 
+
+		
+	*). find_by :- The find_by method finds the first record matching some conditions.  # (bang version find_by!)
+	
+		eg:-  3.2.1 :012 > Publisher.find_by(name: "Pan Macmillan India")             
+			 id: 5,                                                          
+			 name: "Pan Macmillan India",                                    
+			 book_id: 5,                                                     
+			 created_at: Thu, 30 Mar 2023 10:22:22.766797000 UTC +00:00,     
+			 updated_at: Thu, 30 Mar 2023 10:22:22.766797000 UTC +00:00>  
+		
+     ---------------------------------------------------------------------------------------------------------------------
+     		
+     b). Retrieving Multiple Objects in Batches:-
+     	
+     	*). find_each :- Method fetches a batch of records and yields each of them to the provided block, instead of loading all 
+     	                 the records into memory at once. This method is best used when you need to process the records one by one.
+     	                 
+		eg:-    3.2.1 :016 > Book.find_each do |book|
+			3.2.1 :017 >   puts book.name
+			3.2.1 :018 > end
+		output:-	  
+			Harry potter
+			The Hobbit 
+			And Then There Were None
+			The Little Prince
+			A Tale Of Two Cities
+			Harry Potter and the Sorcerer’s Stone
+			 => nil 
+			 
+	 options:-
+	 	
+ 	i). batch_size :- it allows you to specify the number of records to be retrieved in each batch.
+ 	
+	eg:-   3.2.1 :019 > Book.find_each(batch_size: 3) do |book|     #every batch size is 3 here.
+		3.2.1 :020 >   puts book.name
+		3.2.1 :021 > end
+		
+	  output:-
+	  
+	    batch 1:-
+	    	Harry potter
+		The Hobbit 
+		And Then There Were None
+		  
+            batch 2:-
+		The Little Prince
+		A Tale Of Two Cities
+		Harry Potter and the Sorcerer’s Stone
+		 
+	ii). start and finish :- 
+		-> The :start option allows you to configure the first ID of the sequence.
+		-> :finish allows you to configure the last ID of the sequence.
+	NOTE :- we can use this start and finish separately.
+	
+		eg :-
+			3.2.1 :022 > Author.find_each(start: 2, finish: 5) do |auth|
+			3.2.1 :023 >   puts auth.name
+			3.2.1 :024 > end
+			
+		  output :-
+			JRR Tolkien
+			Agatha Christie
+			Antoine de Saint-Exupéry
+			Charles Dickens
+			 => nil 
+
+     	*). find_in_batches :- method fetches a batch of records and returns them as an array, instead of yielding them one by one. 
+     	    This method is best used when you need to perform an operation on a batch of records, such as updating or deleting them.
+     	    
+     	    	eg :-
+     	    	3.2.1 :043 > Book.find_in_batches(batch_size: 3) do |batch|      #first convert into batches in array form
+		3.2.1 :044 >   batch.each do |book|				    # iterate each book of batch one by one.
+		3.2.1 :045 >     puts book.name
+		3.2.1 :046 >   end
+		3.2.1 :047 > end
+		  
+		  output :-
+		     batch 1:-
+		     
+			Harry potter
+			The Hobbit 
+			And Then There Were None
+			
+		     batch 2:- 
+			The Little Prince
+			A Tale Of Two Cities
+			Harry Potter and the Sorcerer’s Stone
+			
+	 i). start and finish options :-
+	 
+	 	eg :-
+	 	3.2.1 :053 > Book.find_in_batches(start: 3,finish: 4) do |batch|
+		3.2.1 :054 >   batch.each do |book|
+		3.2.1 :055 >     puts book.name
+		3.2.1 :056 >   end
+		3.2.1 :057 > end
+		 
+		    output :-                         
+			And Then There Were None                                     
+			The Little Prince                                            
+			 => nil 
+			 
+------------------------------------------------------------------------------------------------------------------------------------
+
+ 2). Conditions.
+ -> The where method allows you to specify conditions to limit the records returned, representing the WHERE-part of the SQL statement.
+    Conditions can either be specified as a string, array, or hash.
+    
+    a). Pure String Conditions
+    
+    	eg :- 3.2.1 :058 > Book.where("book_type = 'fiction'")
+	      output :-
+	                                         
+		  id: 1,                                                     
+		  name: "Harry potter",                                      
+		  book_type: "fiction",
+		  created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00>,
+		
+		  id: 5,
+		  name: "A Tale Of Two Cities",
+		  book_type: "fiction",
+		  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00>,
+		
+		  id: 6,
+		  name: "Harry Potter and the Sorcerer’s Stone",
+		  book_type: "fiction",
+		  created_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00,
+		  updated_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00>] 
+
+    b). Array Conditions
+    
+    	eg 1 :- 
+    	  3.2.1 :083 > Book.where(["name = ?","The Hobbit "])
+              
+        output :-     
+	  id: 2,
+	  name: "The Hobbit ",
+	  book_type: "Fantasy",
+	  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+	  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>] 
+	  
+	eg 2 :-
+	3.2.1 :084 > params = {name: "The Hobbit "}
+	 => {:name=>"The Hobbit "} 
+	3.2.1 :085 > book = Book.where("name = ?", params[:name])
+	3.2.1 :086 > book
+
+	output :-
+	  id: 2,                 
+	  name: "The Hobbit ",   
+	  book_type: "Fantasy",  
+	  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+	  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>] 
+	  
+	i). Conditions That Use LIKE
+	-> Although condition arguments are automatically escaped to prevent SQL injection, SQL LIKE wildcards (i.e., % and _) are not
+	   escaped. This may cause unexpected behavior if an unsanitized value is used in an argument.
+	   
+	   eg :-
+	   3.2.1 :087 > Book.where("name LIKE ?", params[:name] + "%")      #Book Load (0.6ms)
+
+	     output:-
+		  id: 2,
+		  name: "The Hobbit ",
+		  book_type: "Fantasy",
+		  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>] 
+		  
+	  NOTE :- this may also prevent the database from using an intended index, leading to a much slower query.
+	  
+	  -> To avoid these problems, use sanitize_sql_like to escape wildcard characters in the relevant portion of the argument:
+	  eg :-
+	  	3.2.1 :088 > Book.where("name LIKE ?",Book.sanitize_sql_like(params[:name]) + "%")    #Book Load (0.5ms)
+		   
+	     output:-
+		  id: 2,
+		  name: "The Hobbit ",
+		  book_type: "Fantasy",
+		  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>] 
+
+    c). Hash Conditions
+	-> Active Record also allows you to pass in hash conditions which can increase the readability of your conditions syntax.
+	NOTE :- Only equality, range, and subset checking are possible with Hash conditions.
+	
+	i). Equality Conditions :-
+	
+		eg:- first way
+		
+		3.2.1 :089 > Record.where(borrowed: true)
+ 
+ 		output :-
+		  id: 1,
+		  borrowed: true,
+		  book_record_id: 2,
+		  created_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00>,
+
+		  id: 3,
+		  borrowed: true,
+		  book_record_id: 3,
+		  created_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00>] 
+		  
+		eg:- second way
+		
+		3.2.1 :090 > Record.where("borrowed" => true)     #using string
+		  
+		output :-
+		  id: 1,
+		  borrowed: true,
+		  book_record_id: 2,
+		  created_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00>,
+		 
+		  id: 3,
+		  borrowed: true,
+		  book_record_id: 3,
+		  created_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00>] 
+
+	ii). Range Conditions     #can use as between in postgres
+		eg :-
+		
+		3.2.1 :093 > Book.where(created_at: (Time.now.midnight - 3.day)..Time.now.midnight)
+  		
+  		output :-
+		  id: 6,
+		  name: "Harry Potter and the Sorcerer’s Stone",
+		  book_type: "fiction",
+		  created_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00,
+		  updated_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00>] 
+
+	iii). Subset Conditions
+	   -> If you want to find records using the IN expression you can pass an array to the conditions hash:
+	   
+	   	eg :-
+	   	3.2.1 :094 > Record.where(book_record_id: [1,3])
+
+		output :-
+		  id: 3,
+		  borrowed: true,
+		  book_record_id: 3,
+		  created_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00>,
+
+		  id: 4,
+		  borrowed: false,
+		  book_record_id: 1,
+		  created_at: Thu, 30 Mar 2023 13:33:09.869023000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:33:09.869023000 UTC +00:00>] 
+
+	iv). NOT Conditions
+	  -> NOT SQL queries can be built by where.not
+	  
+	  	eg :-
+	  	3.2.1 :095 > Record.where.not(book_record_id: [1,3,4])
+ 
+ 		output :-
+		  id: 1,
+		  borrowed: true,
+		  book_record_id: 2,
+		  created_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00>] 
+
+	v). OR Conditions
+	  -> OR conditions built by calling or on the first relation, and passing the second one as an argument.
+	  
+	  	eg :-
+	  	3.2.1 :098 > Book.where(book_type: 'Fantasy').or(Book.where(book_type: 'Mystery'))
+                  
+               output :-                                         
+		  id: 2,                                                                                  
+		  name: "The Hobbit ",                                                                    
+		  book_type: "Fantasy",                                                                   
+		  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,                             
+		  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>,                            
+				                                               
+		  id: 3,                                                                                  
+		  name: "And Then There Were None",
+		  book_type: "Mystery",
+		  created_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00>] 
+		  
+	vi). AND Conditions
+	   -> AND conditions can be built by chaining where conditions.
+	   
+	   	eg :-
+	   	3.2.1 :103 > Book.where(id: [1, 2]).and(Book.where(id: [2, 3]))
+  		
+  		output :-
+		  id: 2,                 
+		  name: "The Hobbit ",   
+		  book_type: "Fantasy",  
+		  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>] 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+ 3). Ordering
+   -> To retrieve records from the database in a specific order, you can use the order method.
+   
+   	:- Order by single field
+   		-> Book.order(:created_at)
+   		-> Book.order("created_at")   #we can also use string as parameter.
+   		-> Book.order(created_at::desc)
+   		-> Book.order(created_at::asc)
+   		
+   	:- Ordering by multiple field
+   		-> Book.order(name::asc , created_at::desc)
+   		
+   	:- Order multiple times
+   		-> Book.order("name ASC").order("created_at DESC")
+   
+   eg :-
+	   3.2.1 :107 > Record.order(book_record_id: :desc)
+	   
+	output:-       
+	  id: 2,                                   
+	  borrowed: false,                         
+	  book_record_id: 4,                       
+	  created_at: Thu, 30 Mar 2023 13:33:09.858600000 UTC +00:00,
+	  updated_at: Thu, 30 Mar 2023 13:33:09.858600000 UTC +00:00>,
+		     
+	  id: 3,                                   
+	  borrowed: true,                          
+	  book_record_id: 3,                       
+	  created_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00,
+	  updated_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00>,
+		     
+	  id: 1,
+	  borrowed: true,
+	  book_record_id: 2,
+	  created_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00,
+	  updated_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00>,
+
+	  id: 4,
+	  borrowed: false,
+	  book_record_id: 1,
+	  created_at: Thu, 30 Mar 2023 13:33:09.869023000 UTC +00:00,
+	  updated_at: Thu, 30 Mar 2023 13:33:09.869023000 UTC +00:00>]
+	  
+----------------------------------------------------------------------------------------------------------------------------------
+
+ 4). Selecting Specific Fields
+   -> By default, Model.find selects all the fields from the result set using select *.
+   
+   a). select particular column from the database using the query in rails.
+   	
+   	eg 1:- 3.2.1 :109 > Book.select(:name)
+	
+	output :-                                                                
+		[#<Book:0x00007fc7bb1f0290 id: nil, name: "Harry potter">,              
+		 #<Book:0x00007fc7bb1f01f0 id: nil, name: "The Hobbit ">,               
+		 #<Book:0x00007fc7bb1f0150 id: nil, name: "And Then There Were None">,  
+		 #<Book:0x00007fc7bb1f00b0 id: nil, name: "The Little Prince">,         
+		 #<Book:0x00007fc7bb1f0010 id: nil, name: "A Tale Of Two Cities">,      
+		 #<Book:0x00007fc7bd32f960 id: nil, name: "Harry Potter and the Sorcerer’s Stone">] 
+
+	eg 2:- 3.2.1 :110 > Feedback.select(:content, :feedbackable_type)
+              
+        output :-                                                      
+		[#<Feedback:0x00007fc7bae361e0 id: nil, content: "This book is great!", feedbackable_type: "Book">,
+		 #<Feedback:0x00007fc7bd40a6f0 id: nil, content: "interesting book", feedbackable_type: "Book">,
+		 #<Feedback:0x00007fc7bd40a650 id: nil, content: "i like your book harry potter", feedbackable_type: "Author">] 
+
+   b). for uniq element only.
+   
+   	eg :- 3.2.1 :111 > Book.select(:book_type).distinct
+            
+            output :-                                                           
+		[#<Book:0x00007fc7bd42f658 id: nil, book_type: "fiction">,                 
+		 #<Book:0x00007fc7bd42f5b8 id: nil, book_type: "Adventure">,               
+		 #<Book:0x00007fc7bd42f518 id: nil, book_type: "Fantasy">,                 
+		 #<Book:0x00007fc7bd42f478 id: nil, book_type: "Mystery">]  
+		 
+----------------------------------------------------------------------------------------------------------------------------------- 
+
+ 5). Limit and Offset
+ -> To apply LIMIT to the "PSQL" fired by the Model.find, you can specify the LIMIT using limit and offset methods on the relation.
+ -> You can use limit to specify the number of records to be retrieved.
+ -> use offset to specify the number of records to skip before starting to return the records.
+ 
+ 	eg for limit :-
+	 	3.2.1 :117 > Author.order("id DESC").limit(2)
+
+		  id: 6,
+		  name: "Charles Dickens",
+		  book_id: 3,
+		  created_at: Thu, 30 Mar 2023 09:03:00.262260000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 09:03:00.262260000 UTC +00:00>,
+		
+		  id: 5,
+		  name: "Charles Dickens",
+		  book_id: 5,
+		  created_at: Thu, 30 Mar 2023 09:03:00.257843000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 09:03:00.257843000 UTC +00:00>] 
+
+	eg for offset :-
+		3.2.1 :126 > Author.offset(2).limit(1)
+ 
+		  id: 3,
+		  name: "Agatha Christie",
+		  book_id: 3,
+		  created_at: Thu, 30 Mar 2023 09:03:00.249358000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 09:03:00.249358000 UTC +00:00>] 
+	
+---------------------------------------------------------------------------------------------------------------------------------	  
+ 6). Group
+ -> To apply a GROUP BY clause to the PSQL fired by the finder, you can use the group method.
+
+	eg :- 3.2.1 :127 > Book.select("book_type").group("book_type")
+	
+             output:-                                                    
+		[#<Book:0x00007fc7bab572a8 id: nil, book_type: "fiction">,           
+		 #<Book:0x00007fc7bd42da38 id: nil, book_type: "Adventure">,         
+		 #<Book:0x00007fc7bd42d998 id: nil, book_type: "Fantasy">,           
+		 #<Book:0x00007fc7bd42d8f8 id: nil, book_type: "Mystery">] 
+		 
+	a). Total of grouped items
+	  -> To get the total of grouped items on a single query, call count after the group.
+	  
+	  	eg :- 3.2.1 :128 > Book.group("book_type").count
+ 		
+ 		   output :-
+ 			{"fiction"=>3, "Adventure"=>1, "Fantasy"=>1, "Mystery"=>1}       
+ 			
+----------------------------------------------------------------------------------------------------------------------------------
+7). Having
+ -> PSQL uses the HAVING clause to specify conditions on the GROUP BY fields. You can add the HAVING clause to the SQL fired by 
+    the Model.find by adding the having method to the find.
+    
+    eg :-
+    3.2.1 :157 > Book.select("book_type , sum(id)").group("book_type").having("sum(id) < ?",200)
+  
+     output :-
+	[#<Book:0x00007fc7bd46dd40 id: nil, book_type: "fiction">,
+	 #<Book:0x00007fc7bd46dca0 id: nil, book_type: "Adventure">,
+	 #<Book:0x00007fc7bd46dc00 id: nil, book_type: "Fantasy">,
+	 #<Book:0x00007fc7bd46db60 id: nil, book_type: "Mystery">] 
+	 
+-----------------------------------------------------------------------------------------------------------------------------------
+8). Overriding Conditions
+
+    a). unscope :- You can specify certain conditions to be removed using the unscope method.
+ 
+ 	eg with using unscope :-
+		 3.2.1 :002 > Book.where('id > 4').limit(1).order('id desc').unscope(:order)  
+			
+		output :-	                                                                   
+		  id: 5,                                                                                                      
+		  name: "A Tale Of Two Cities",                                                                               
+		  book_type: "fiction",                                                                                       
+		  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,                                                 
+		  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00>]   
+		  
+	eg without using unscope :-	                                               
+		3.2.1 :003 > Book.where('id > 4').limit(1).order('id desc')
+		
+		output :-			                                                                     
+		  id: 6,                                                                                                      
+		  name: "Harry Potter and the Sorcerer’s Stone",                                                              
+		  book_type: "fiction",                                                                                       
+		  created_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00,                                                 
+		  updated_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00>]    
+		  
+	NOTE :- You can also unscope specific where clauses.
+	
+		3.2.1 :009 > Book.where(id: 3, name: 'A Tale Of Two Cities').unscope(where: :id)
+                                                                                            
+		  id: 5,                                                                                                                
+		  name: "A Tale Of Two Cities",                                                                                         
+		  book_type: "fiction",                                                                                                 
+		  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,                                                           
+		  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00>]    
+
+    b). only :- You can also override conditions using the only method.
+    
+    	eg :- 3.2.1 :010 > Book.where('id > 4').limit(1).order('id desc').only(:order, :where)#only order and where condition get executed
+		  
+	output :-                                                                              
+	  id: 6,                                                                                                            
+	  name: "Harry Potter and the Sorcerer’s Stone",                                                                    
+	  book_type: "fiction",                                                                                             
+	  created_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00,                                                       
+	  updated_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00>,                                                      
+	                                                                                       
+	  id: 5,                                                                                                            
+	  name: "A Tale Of Two Cities",                                                                                     
+	  book_type: "fiction",                                                                                             
+	  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,                                                       
+	  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00>]   
+	  
+    c). reselect :- The reselect method overrides an existing select statement.
+    
+    	eg :- 3.2.1 :012 > Book.select(:id, :name).reselect(:created_at)   #reselect will suppress the select condition.
+		
+	    output :-		                                                                        
+		[#<Book:0x00007ff51e45a6f8 id: nil, created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00>,
+		 #<Book:0x00007ff51e45a658 id: nil, created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00>,
+		 #<Book:0x00007ff51e45a5b8 id: nil, created_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00>,
+		 #<Book:0x00007ff51e45a518 id: nil, created_at: Thu, 30 Mar 2023 08:54:11.350053000 UTC +00:00>,
+		 #<Book:0x00007ff51e45a478 id: nil, created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00>,
+		 #<Book:0x00007ff51e45a3d8 id: nil, created_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00>] 
+		 
+    d). reorder :- The reorder method overrides the default scope order. we can change the previous or defaut order type with new order.
+    
+    	eg :- 3.2.1 :014 > authors = Author.order('name asc')
+  	  query become :- Author Load (0.8ms)  SELECT "authors".* FROM "authors" ORDER BY name asc
+  	  
+  	  -> using reorder
+  	     3.2.1 :016 > authors.reorder('name desc')
+  	  query become :- Author Load (0.5ms)  SELECT "authors".* FROM "authors" ORDER BY name desc
+                    
+               output :-    
+		  id: 2,                                                
+		  name: "JRR Tolkien",                                  
+		  book_id: 2,                                           
+		  created_at: Thu, 30 Mar 2023 09:03:00.244777000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 09:03:00.244777000 UTC +00:00>,
+				        
+		  id: 1,                                                
+		  name: "JK Rowling",                                   
+		  book_id: 1,                                           
+		  created_at: Thu, 30 Mar 2023 08:57:18.310960000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:57:18.310960000 UTC +00:00>,
+				        
+		  id: 5,
+		  name: "Charles Dickens",
+		  book_id: 5,
+		  created_at: Thu, 30 Mar 2023 09:03:00.257843000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 09:03:00.257843000 UTC +00:00>,
+
+    e). reverse_order :- The reverse_order method reverses the ordering clause if specified.
+    
+    	eg :- 3.2.1 :021 > Record.select('borrowed').order('borrowed desc')    #before reverse_order
+                                                         
+		[#<Record:0x00007ff51e3fbf40 id: nil, borrowed: true>,        
+		 #<Record:0x00007ff51e3fbea0 id: nil, borrowed: true>,        
+		 #<Record:0x00007ff51e3fbe00 id: nil, borrowed: false>,       
+		 #<Record:0x00007ff51e3fbd60 id: nil, borrowed: false>]   
+		     
+	      3.2.1 :022 > Record.select('borrowed').order('borrowed desc').reverse_order    #after reverse_order
+				                                            
+		[#<Record:0x00007ff51c3073c0 id: nil, borrowed: false>,       
+		 #<Record:0x00007ff51c307320 id: nil, borrowed: false>,       
+		 #<Record:0x00007ff51c307280 id: nil, borrowed: true>,
+		 #<Record:0x00007ff51c3071e0 id: nil, borrowed: true>] 
+
+    f). rewhere :- The rewhere method overrides an existing, named where condition.
+    
+    	eg :- 3.2.1 :024 > Book.select(:name).where(id: 3).rewhere(id: 5)  #where clause is suppressed by rewhere clause.
+	  Book Load (0.4ms)  SELECT "books"."name" FROM "books" WHERE "books"."id" = $1  [["id", 5]]   
+	  
+	  output :-
+	 	=> [#<Book:0x00007ff51ca0b900 id: nil, name: "A Tale Of Two Cities">] 
+	 	
+	NOTE :- if we write where with another where that will make and condition.
+		syntax :- Book.where(condition).where(condition)
+
+----------------------------------------------------------------------------------------------------------------------------------
+9). Null Relation
+-> The none method returns a chainable relation with no records.
+
+	eg :-   3.2.1 :028 > Book.none
+		 => [] 
+		 
+		3.2.1 :029 > Book.none?    
+		  Book Exists? (0.9ms)  SELECT 1 AS one FROM "books" LIMIT $1  [["LIMIT", 1]]
+		 => false   
+		 
+-----------------------------------------------------------------------------------------------------------------------------------
+10). Readonly Objects
+ -> Active Record provides the readonly method on a relation to explicitly disallow modification of any of the returned objects.
+    Any attempt to alter a readonly record will not succeed, raising an ActiveRecord::ReadOnlyRecord exception.
+    
+    eg :- 3.2.1 :030 > book = Book.readonly.first
+          3.2.1 :031 > book
+                                         
+		 id: 1,                                                            
+		 name: "Harry potter",                                             
+		 book_type: "fiction",                                             
+		 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,       
+		 updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00> 
+		 
+	  3.2.1 :033 > book.id += 1
+	      => 2 
+	  3.2.1 :034 > book.save   #this will throw error for readonly.
+	  
+	        /home/beryl/.rvm/gems/ruby-3.2.1/gems/activerecord-7.0.4.3/lib/active_record/persistence.rb:1123:in
+	         `_raise_readonly_record_error': Book is marked as readonly (ActiveRecord::ReadOnlyRecord)  
+
+---------------------------------------------------------------------------------------------------------------------------------        
+11). Locking Records for Update
+ -> Locking is helpful for preventing race conditions when updating records in the database and ensuring atomic updates.
+ 
+ -> Active Record provides two locking mechanisms:
+
+	a). Optimistic Locking :- 
+	-> Optimistic Locking is a technique for ensuring that multiple updates to a record don't conflict with each other. 
+	-> It uses a special column named lock_version to store the version number of the record. 
+	-> When a record is fetched from the database, its lock_version is also fetched. 
+	-> When the record is updated, Active Record checks if the lock_version in the database matches the lock_version of the fetched
+	   record. If they match, the record is updated and the lock_version is incremented by 1. 
+	-> If they don't match, it means that some other process has updated the record, and Active Record raises an
+	   ActiveRecord::StaleObjectError error.
+	   
+	   :- First Add lock_version column in Books table.
+	   	: rails g migration AddLockVersionToBook lock_version:integer
+	   	
+	  eg :-3.2.1 :040 > book
+                                        
+		 id: 1,                                                            
+		 name: "Harry potter",                                             
+		 book_type: "fiction",                                             
+		 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,       
+		 updated_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,       
+		 lock_version: 0>                                       #lock version is 0 
+		                                              
+		3.2.1 :041 > book.name = "Harry potter lock_version"    #change book name
+		 => "Harry potter lock_version" 
+		 
+		3.2.1 :042 > book.save     				  #save the change
+				                         
+		3.2.1 :043 > book          				  #check for book name
+		                                       
+		 id: 1,                                                           
+		 name: "Harry potter lock_version",                               
+		 book_type: "fiction",                                            
+		 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,      
+		 updated_at: Tue, 04 Apr 2023 07:36:30.067490000 UTC +00:00,
+		 lock_version: 1>                 			  # lock version is incremented by 1 after update.
+			
+	b). Pessimistic Locking :-
+	-> It is a technique for preventing other processes from updating a record while it's being updated by another process. 
+	-> It uses a database-level lock to ensure that only one process can update a record at a time. 
+	-> This technique is also known as "pessimistic concurrency control" because it's based on the assumption that conflicts 
+	   will occur, and that it's better to prevent them from happening than to deal with them after they occur.
+	   
+	   eg :- 3.2.1 :055 > book = Book.lock.first   #lock! = other processes can't update it until the lock is released.
+                                                           
+		3.2.1 :056 > book
+				                       
+			 id: 1,                                                            
+			 name: "12345",                                                    
+			 book_type: "fiction",                                             
+			 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,       
+			 updated_at: Tue, 04 Apr 2023 07:55:07.352146000 UTC +00:00,       
+			 lock_version: 2>                                                  
+		3.2.1 :057 > book.name = "Harry potter"
+		 => "Harry potter" 
+		3.2.1 :058 > book.save!     #lock released after save
+		
+----------------------------------------------------------------------------------------------------------------------------------
+12). Joining Tables
+ -> Active Record provides two finder methods for specifying JOIN clauses on the resulting SQL: joins and left_outer_joins. 
+    While joins should be used for INNER JOIN or custom queries, left_outer_joins is used for queries using LEFT OUTER JOIN.
+    
+    a). joins  (Inner join)
+    -> There are multiple ways to use the joins method.
+
+	*). Using a String SQL Fragment:-
+	
+	 -> You can just supply the raw SQL specifying the JOIN clause to joins.
+	 eg :-
+	    3.2.1 :063 > Book.joins("INNER JOIN authors on authors.book_id = books.id and books.book_type = 'fiction'")
+                                                                
+		  id: 1,                                                                                  
+		  name: "Harry potter",                                                                   
+		  book_type: "fiction",                                                                   
+		  created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,                             
+		  updated_at: Tue, 04 Apr 2023 07:56:57.096612000 UTC +00:00,                             
+		  lock_version: 3>,                                                                       
+		                                                             
+		  id: 5,
+		  name: "A Tale Of Two Cities",
+		  book_type: "fiction",
+		  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,
+		  lock_version: 0>] 
+		  
+	*). Using Array/Hash of Named Associations :-
+	
+	-> Active Record lets you use the names of the associations defined on the model as a shortcut for specifying JOIN clauses 
+	   for those associations when using the joins method.
+	   
+	   eg :-
+	   	3.2.1 :065 > Book.joins(:authors)
+  		Book Load (0.8ms)  SELECT "books".* FROM "books" INNER JOIN "authors" ON "authors"."book_id" = "books"."id"
+  		
+  	*). Joining Multiple Associations :-
+  	
+  	   eg :- Book.joins(:author, :reviews)     #example from ruby guide.
+
+		i). Joining Nested Associations (Single Level)
+		
+			eg :- Book.joins(reviews: :customer)
+			
+		ii). Joining Nested Associations (Multiple Level)
+			eg :- Author.joins(books: [{ reviews: { customer: :orders } }, :supplier] )
+			
+			explanation -> 
+				SELECT * FROM authors
+				  INNER JOIN books ON books.author_id = authors.id
+				  INNER JOIN reviews ON reviews.book_id = books.id
+				  INNER JOIN customers ON customers.id = reviews.customer_id
+				  INNER JOIN orders ON orders.customer_id = customers.id
+				INNER JOIN suppliers ON suppliers.id = books.supplier_id
+				
+	*). Specifying Conditions on the Joined Tables
+	 -> You can specify conditions on the joined tables using the regular Array and String conditions. 
+	    Hash conditions provide a special syntax for specifying conditions for the joined tables.
+	    
+	    eg :-
+	        3.2.1 :028 > time_range = (Time.now.midnight - 5.day)..Time.now.midnight
+		3.2.1 :029 > Book.joins(:authors).where(authors: { created_at: time_range }).limit(2)
+		 
+	      output :-
+		  id: 1,
+		  name: "Harry potter",
+		  book_type: "fiction",
+		  created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+		  updated_at: Tue, 04 Apr 2023 07:56:57.096612000 UTC +00:00,
+		  lock_version: 3>,
+		 
+		  id: 2,
+		  name: "The Hobbit ",
+		  book_type: "Fantasy",
+		  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+		  lock_version: 0>] 
+
+    b). left_outer_joins
+      -> If you want to select a set of records whether or not they have associated records you can use the left_outer_joins method.
+      
+      	 eg :- 3.2.1 :046 > Book.left_outer_joins(:record).select(:name)
+		  Book Load (0.6ms)  SELECT "books"."name" FROM "books" LEFT OUTER JOIN "book_records" ON "book_records"."book_id"
+		   = "books"."id" LEFT OUTER JOIN "records" ON "records"."book_record_id" = "book_records"."id"
+		                                                                                                                                                                                                             
+		[#<Book:0x00007fd398021b88 id: nil, name: "The Hobbit ">,                                                      
+		 #<Book:0x00007fd3980219a8 id: nil, name: "The Little Prince">,                                                
+		 #<Book:0x00007fd398021908 id: nil, name: "And Then There Were None">,                                         
+		 #<Book:0x00007fd398021868 id: nil, name: "Harry potter">,                                                     
+		 #<Book:0x00007fd3980217c8 id: nil, name: "A Tale Of Two Cities">,                                             
+		 #<Book:0x00007fd398021728 id: nil, name: "Harry Potter and the Sorcerer’s Stone">]
+
+--------------------------------------------------------------------------------------------------------------------------------
+13). Eager Loading Associations
+  -> Eager loading is a technique for loading associated records in a single query, rather than fetching them one-by-one.
+     This can help avoid the N+1 query problem, where a query is executed for each record in a collection.
+
+  -> Active Record provides several methods for eager loading associations using the query interface:
+
+	a). includes -> This method allows you to specify the associations to be eager-loaded in a single query.
+
+	     imp -> generates a single SQL query that includes a JOIN on the associated table(s), fetching all the required records 
+	            in a single query.
+	
+	    eg :- 3.2.1 :054 > Book.includes(:authors).where("book_id > ?", 3).pluck(:name)   #pluck is used to print specific columns
+		   
+		output :-
+ 		   => ["The Little Prince", "A Tale Of Two Cities"] 
+ 		   
+ 	b). preload -> This method is similar to includes, but it does not perform a join. Instead, it loads the associations using 
+ 	               a separate query.
+ 	               
+ 	     imp ->  it doesn't require any additional joins in the initial query, so it can be more performant in certain cases.
+ 	               
+ 	    eg :- 3.2.1 :061 > Book.preload(:authors).pluck(:name)
+                   
+                   output :-                                                                   
+			["The Hobbit ",                                                                          
+			 "And Then There Were None",                                                             
+			 "The Little Prince",                                                                    
+			 "A Tale Of Two Cities",                                                                 
+			 "Harry Potter and the Sorcerer’s Stone",                                                
+			 "Harry potter"]               
+			 
+	c). eager_load -> This method also allows you to specify the associations to be eagerly-loaded, but it differs from includes 
+	                  in how the query is constructed. 
+	                  
+	       imp :- includes an OUTER JOIN to ensure that all main records are included in the result set, even if they have no
+	              associated records.     
+	                  
+	    eg :- 3.2.1 :062 > Book.eager_load(:authors).pluck(:name)
+                   
+                   output :-                                                     
+			["Harry potter",                                                                 
+			 "The Hobbit ",                                                                  
+			 "And Then There Were None",                                                     
+			 "The Little Prince",                                                            
+			 "A Tale Of Two Cities",                                    
+			 "And Then There Were None",                                
+			 "Harry Potter and the Sorcerer’s Stone"]    
+			 
+----------------------------------------------------------------------------------------------------------------------------------
+14). Scopes 
+ -> scopes in Rails allow you to specify common queries that can be reused throughout your application. Scopes are defined inside 
+    the model class using the scope method.      
+    
+ eg :-
+ 	step 1 :- Add scope in book.rb model.
+ 	          :-  scope :book_type, -> {where(book_type: "Mystery")}
+ 		
+ 	step 2 :- 3.2.1 :068 > Book.book_type
+			
+		output :-	               
+		  id: 3,                                                    
+		  name: "And Then There Were None",                         
+		  book_type: "Mystery",                                     
+		  created_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,
+		  lock_version: 0>]     
+		  
+    a). Passing in arguments
+	-> Your scope can take arguments.
+	
+	eg :-
+		step 1 :- Add scope in book.rb model.
+			  :- scope :greater_than_id, ->(var) { where("id > ?", var) }   #parameter scope
+			  
+		step 2 :- 3.2.1 :084 > Book.greater_than_id(4)
+                               
+                      output :-                        
+			  id: 5,                                                                            
+			  name: "A Tale Of Two Cities",                                    
+			  book_type: "fiction",                                            
+			  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,      
+			  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,      
+			  lock_version: 0>,                                                
+			                           
+			  id: 6,                                                    
+			  name: "Harry Potter and the Sorcerer’s Stone",            
+			  book_type: "fiction",                                     
+			  created_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00,
+			  updated_at: Fri, 31 Mar 2023 10:17:29.648225000 UTC +00:00,
+			  lock_version: 0>] 
+				 
+    b). Using conditionals
+	-> Your scope can utilize conditionals.
+	
+	eg :-
+		step 1 :- Add scope in book.rb model.
+			#if time present then other condition get checked.
+			  :- scope :created_before, ->(time) { where("created_at < ?", time) if time.present? } 
+			  											
+		step 2 :- 3.2.1 :088 > Book.created_before(Time.now.midnight - 4.days).limit(2)
+ 		
+ 		     output :-
+			  id: 2,
+			  name: "The Hobbit ",
+			  book_type: "Fantasy",
+			  created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,
+			  lock_version: 0>,
+			 
+			  id: 3,
+			  name: "And Then There Were None",
+			  book_type: "Mystery",
+			  created_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,
+			  updated_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,
+			  lock_version: 0>] 
+			  
+    c). Applying a default scope
+	-> If we wish for a scope to be applied across all queries to the model we can use the default_scope method within 
+	   the model itself.
+	   
+	   eg :-
+	   	   step 1 :- Add default scope in record.rb model.
+	   	   	     :- default_scope { where(borrowed: true) }
+	   	   	     
+	   	   step 2 :- 3.2.1 :090 > Record.all    #now every time it fetch true borrower only.
+                        
+                      output :-      
+			  id: 1,                                                      
+			  borrowed: true,                                             
+			  book_record_id: 2,                                          
+			  created_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00, 
+			  updated_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00>,
+		                                 
+			  id: 3,                                                      
+			  borrowed: true,                                             
+			  book_record_id: 3,                                          
+			  created_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00, 
+			  updated_at: Thu, 30 Mar 2023 13:33:09.863343000 UTC +00:00>] 
+
+    d). Merging of scopes
+	-> Just like where clauses, scopes are merged using AND conditions.
+	
+	eg :- 3.2.1 :091 > Book.created_before(Time.now.midnight - 4.days).greater_than_id(4)
+                
+               output :-         
+		  id: 5,
+		  name: "A Tale Of Two Cities",
+		  book_type: "fiction",
+		  created_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 08:54:11.352993000 UTC +00:00,
+		  lock_version: 0>] 
+		  
+	eg :- using where with scope
+		3.2.1 :093 > Book.greater_than_id(2).where(book_type: "Mystery")
+               
+               output :-                                            
+		  id: 3,                                                                               
+		  name: "And Then There Were None",                                                    
+		  book_type: "Mystery",                                                                
+		  created_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,                          
+		  updated_at: Thu, 30 Mar 2023 08:54:11.346950000 UTC +00:00,                          
+		  lock_version: 0>]      
+
+    e). Removing All Scoping
+	-> If we wish to remove scoping for any reason we can use the unscoped method. This is especially useful if a default_scope is
+	   specified in the model.
+	   
+	eg :- 3.2.1 :100 > Record.unscoped.all.limit(2)    #suppress the default scope
+ 
+ 	      output:-
+		  id: 1,
+		  borrowed: true,
+		  book_record_id: 2,
+		  created_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:31:35.263745000 UTC +00:00>,
+		
+		  id: 2,
+		  borrowed: false,
+		  book_record_id: 4,
+		  created_at: Thu, 30 Mar 2023 13:33:09.858600000 UTC +00:00,
+		  updated_at: Thu, 30 Mar 2023 13:33:09.858600000 UTC +00:00>] 
+
+-------------------------------------------------------------------------------------------------------------------------------
+15). Dynamic Finders
+  -> For every field (also known as an attribute) you define in your table, Active Record provides a finder method.
+  
+  	eg :- 3.2.1 :103 > Book.find_by_name("Harry potter")
+               
+              output :-                              
+		 id: 1,                                                               
+		 name: "Harry potter",                                                
+		 book_type: "fiction",                                                
+		 created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,          
+		 updated_at: Tue, 04 Apr 2023 07:56:57.096612000 UTC +00:00,          
+		 lock_version: 3>      
+                                                
+	eg :- 3.2.1 :104 > Book.find_by_book_type("Fantasy")
+                    
+              output :-                            
+		 id: 2,                                                                    
+		 name: "The Hobbit ",                                                      
+		 book_type: "Fantasy",                                                     
+		 created_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,               
+		 updated_at: Thu, 30 Mar 2023 08:54:11.342365000 UTC +00:00,               
+		 lock_version: 0>       
+		 
+	eg :- 3.2.1 :106 > Book.find_by_book_type_and_name("Fantasy","Harry potter")  #combine two finders together using "and" 
+	
+	  Book Load (0.3ms)  SELECT "books".* FROM "books" WHERE "books"."book_type" = $1 AND "books"."name" = $2 LIMIT $3
+	  [["book_type", "Fantasy"], ["name", "Harry potter"], ["LIMIT", 1]]         
+	      
+	      output :-                                            
+		 => nil 
+		 
+---------------------------------------------------------------------------------------------------------------------------------
+16). Enums
+ -> An enum lets you define an Array of values for an attribute and refer to them by name. The actual value stored in the database
+    is an integer that has been mapped to one of the values.
+    
+    :- create enum in books.
+    -> enum :book_type, [:fiction, :Mystery, :Adventure, :Fantasy]
+    
+    		eg 1:- Book.fiction   #return all book whose book_type is fiction.
+    		
+    		eg 2:- book = Book.fiction? #if book is fiction type, then return true.
+    		
+--------------------------------------------------------------------------------------------------------------------------------
+17). Understanding Method Chaining
+ -> The Active Record pattern implements Method Chaining, which allow us to use multiple Active Record methods together 
+    in a simple and straightforward way.
+    
+    a). Retrieving filtered data from multiple tables.
+    
+    	eg :- 3.2.1 :011 > Book.select('books.id,authors.name').joins(:authors).where('authors.created_at > ?',1.week.ago)
+
+	    output :-
+		[#<Book:0x00007fe0500dc4f0 id: 1, name: "JK Rowling">,
+		 #<Book:0x00007fe0500dc450 id: 2, name: "JRR Tolkien">,
+		 #<Book:0x00007fe0500dc3b0 id: 3, name: "Agatha Christie">,
+		 #<Book:0x00007fe0500dc310 id: 4, name: "Antoine de Saint-Exupéry">,
+		 #<Book:0x00007fe0500dc270 id: 5, name: "Charles Dickens">,
+		 #<Book:0x00007fe0500dc1d0 id: 3, name: "Charles Dickens">] 
+
+    b). Retrieving specific data from multiple tables.
+    
+    	eg :- 3.2.1 :014 > Book.select('books.id,authors.name').joins(:authors).find_by(name: 'The Little Prince')
+                  
+            output :-                                   
+		 #<Book:0x00007fe04b8eb920 id: 4, name: "Antoine de Saint-Exupéry">   
+    		
+---------------------------------------------------------------------------------------------------------------------------------
+18). Find or Build a New Object
+ -> It's common that you need to find a record or create it if it doesn't exist. You can do that with the find_or_create_by and
+    find_or_create_by! methods.
+    
+    a). find_or_create_by
+      -> The find_or_create_by method checks whether a record with the specified attributes exists. If it doesn't, then create is called.
+      
+      eg :- 3.2.1 :015 > Book.find_or_create_by(name: 'A Revenue Stamp')
+      
+  Book Load (0.3ms)  SELECT "books".* FROM "books" WHERE "books"."name" = $1 LIMIT $2  [["name", "A Revenue Stamp"], ["LIMIT", 1]]
+  TRANSACTION (0.3ms)  BEGIN                                                                                           
+  Book Create (2.8ms)  INSERT INTO "books" ("name", "book_type", "created_at", "updated_at", "lock_version") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["name", "A Revenue Stamp"], ["book_type", nil], ["created_at", "2023-04-05 05:28:07.313610"], ["updated_at", "2023-04-05 05:28:07.313610"], ["lock_version", 0]]                                                                                   
+  TRANSACTION (1.1ms)  COMMIT                                                                                     
+ =>                                                                                                               
+             
+	     output:-                 
+		 id: 7,                                                     
+		 name: "A Revenue Stamp",                                   
+		 book_type: nil,                                            
+		 created_at: Wed, 05 Apr 2023 05:28:07.313610000 UTC +00:00,
+		 updated_at: Wed, 05 Apr 2023 05:28:07.313610000 UTC +00:00,
+		 lock_version: 0>        
+		 
+    b). find_or_create_by!
+      -> Similer to find_or_create_by but find_or_create_by! to raise an exception if the new record is invalid.
+      -> works when there is validation on attributes.
+      
+    c). find_or_initialize_by
+      -> The find_or_initialize_by method will work just like find_or_create_by but it will call new instead of create. 
+      -> This means that a new model instance will be created in memory but won't be saved to the database.
+      
+      	eg :-   3.2.1 :019 > book = Book.find_or_initialize_by(name: 'War and Peace')
+		3.2.1 :020 > book.new_record?
+		 => true 
+		3.2.1 :022 > book.save
+		
+  TRANSACTION (0.2ms)  BEGIN
+  Book Create (0.3ms)  INSERT INTO "books" ("name", "book_type", "created_at", "updated_at", "lock_version") VALUES ($1, $2, $3, $4, $5) RETURNING "id"  [["name", "War and Peace"], ["book_type", nil], ["created_at", "2023-04-05 05:39:50.971660"], ["updated_at", "2023-04-05 05:39:50.971660"], ["lock_version", 0]]                                     
+  TRANSACTION (1.9ms)  COMMIT                                     
+ => true   
+
+--------------------------------------------------------------------------------------------------------------------------------
+19). Finding by SQL
+ -> If you'd like to use your own SQL to find records in a table you can use find_by_sql. The find_by_sql method will return 
+    an array of objects even if the underlying query returns just a single record.
+    
+    eg :- 3.2.1 :028 > Author.find_by_sql('select name from authors where id between 2 and 5')
+    
+      output :-
+	  Author Load (0.6ms)  select name from authors where id between 2 and 5
+	 =>                                                                                           
+	[#<Author:0x00007fe050574440 id: nil, name: "JRR Tolkien">,                                   
+	 #<Author:0x00007fe0505743a0 id: nil, name: "Agatha Christie">,                               
+	 #<Author:0x00007fe050573f40 id: nil, name: "Antoine de Saint-Exupéry">,                      
+	 #<Author:0x00007fe050573ea0 id: nil, name: "Charles Dickens">]  
+	 
+    a). select_all
+      -> find_by_sql has a close relative called connection.select_all. select_all will retrieve objects from the database using 
+         custom SQL just like find_by_sql but will not instantiate them.
+         
+         eg :- 3.2.1 :031 > Book.connection.select_all('select name from books where id between 3 and 4').to_a
+	   (0.5ms)  select name from books where id between 3 and 4
+	   
+	   output :-
+	 	=> [{"name"=>"And Then There Were None"}, {"name"=>"The Little Prince"}]   
+	 	
+    b). pluck
+      -> pluck can be used to query single or multiple columns from the underlying table of a model. It accepts a list of column 
+         names as an argument and returns an array of values of the specified columns with the corresponding data type.
+         
+         eg :- 3.2.1 :035 > Record.where(borrowed: true).pluck(:id)
+ 	    
+ 	    output :-
+ 		=> [1, 3]    
+ 		                                                                              
+	 eg :- 3.2.1 :036 > Book.distinct.pluck(:id,:book_type)
+  
+  	    output :-
+ 		=> [[8, nil], [5, "fiction"], [6, "fiction"], [4, "Adventure"], [3, "Mystery"], [7, nil], [2, "Fantasy"], [1, "0"]] 
+ 		
+    c). ids
+      -> ids can be used to pluck all the IDs for the relation using the table's primary key.
+      
+      	 eg :-  3.2.1 :037 > Book.ids
+		  Book Pluck (0.4ms)  SELECT "books"."id" FROM "books"
+		 => [2, 3, 4, 5, 6, 1, 7, 8]       
+		                                                          
+	 eg :-	3.2.1 :038 > Author.ids
+		  Author Pluck (0.5ms)  SELECT "authors"."id" FROM "authors"
+		 => [1, 2, 3, 4, 5, 6]     
+
+---------------------------------------------------------------------------------------------------------------------------------
+20). Existence of Objects
+ -> If you simply want to check for the existence of the object there's a method called exists?. 
+ -> This method will query the database using the same query as find, but instead of returning an object or collection of objects 
+ -> it will return either true or false.
+ 
+ 	 eg :- 3.2.1 :048 > Book.exists?(1)
+		  Book Exists? (0.6ms)  SELECT 1 AS one FROM "books" WHERE "books"."id" = $1 LIMIT $2  [["id", 1], ["LIMIT", 1]]
+		  
+	     output :-
+		 => true 
+		 
+	 eg :- 3.2.1 :049 > Book.exists?(id: [1,2,3])
+		  Book Exists? (0.5ms)  SELECT 1 AS one FROM "books" WHERE "books"."id" IN ($1, $2, $3) LIMIT $4  [["id", 1], ["id", 2],
+		  ["id", 3], ["LIMIT", 1]]       
+		  
+	     output :-                                                  
+		 => true        
+		 
+	 eg :- 3.2.1 :050 > Record.where(borrowed: true).any?
+  		Record Exists? (0.4ms)  SELECT 1 AS one FROM "records" WHERE "records"."borrowed" = $1 LIMIT $2  [["borrowed", true],
+  		["LIMIT", 1]]
+  		
+  	     output :-
+ 		 => true      
+ 		                                                 
+	 eg :- 3.2.1 :051 > Record.where(borrowed: true).many?
+  		Record Count (0.6ms)  SELECT COUNT(*) FROM (SELECT 1 AS one FROM "records" WHERE "records"."borrowed" = $1 LIMIT $2)
+  		subquery_for_count  [["borrowed", true], ["LIMIT", 2]] 
+  		
+  	     output :-                              
+		 => true            
+		 
+---------------------------------------------------------------------------------------------------------------------------------
+21). Calculations
+ -> This section uses count as an example method in this preamble, but the options described apply to all sub-sections.
+ 
+    a). Count
+      -> If you want to see how many records are in your model's table you could call Customer.count and that will return the number.
+      
+      eg :- 3.2.1 :052 > Author.count
+ 
+ 	    output :-
+ 		=> 6  
+ 		                                                       
+      eg :- 3.2.1 :053 > Book.where(book_type: 'fiction').count
+  		
+  	    output :-
+ 		=> 2    
+ 		
+    b). Average
+    
+      eg :- 3.2.1 :055 > Book.average('id')
+  	    
+  	    output :-
+ 		=> 0.45e1   
+ 		
+    c). Maximum
+    
+      eg :- 3.2.1 :057 > Book.maximum('id')
+  	    
+  	    output :-
+ 		=> 8  
+ 		                                                             
+    d). Minimum
+    
+      eg :- 3.2.1 :058 > Book.minimum('id')
+  	    
+  	    output :-
+ 		=> 1    
+ 		                                                       
+    e). Sum
+    
+      eg :- 3.2.1 :059 > Book.sum('id')
+  
+  	    output :-
+		=> 36    
+		
+---------------------------------------------------------------------------------------------------------------------------------
+22). Running EXPLAIN
+ -> You can run explain on a relation. EXPLAIN output varies for each database.
+ 
+      eg :- 3.2.1 :070 > Book.where(id: 1).joins(:authors).explain
+  	           Book Load (0.4ms)  SELECT "books".* FROM "books" INNER JOIN "authors" ON "authors"."book_id" = "books"."id" WHERE
+  	           "books"."id" = $1  [["id", 1]]          
+  
+  OUTPUT :-
+                                                                                       
+	EXPLAIN for: SELECT "books".* FROM "books" INNER JOIN "authors" ON "authors"."book_id" = "books"."id" WHERE "books"."id" = $1
+	[["id", 1]]
+
+							         QUERY PLAN                                       
+			---------------------------------------------------------------------------------------------
+			 Nested Loop  (cost=4.33..20.85 rows=4 width=92)                                          
+			   ->  Index Scan using books_pkey on books  (cost=0.15..8.17 rows=1 width=92)            
+				 Index Cond: (id = '1'::bigint)                                                   
+			   ->  Bitmap Heap Scan on authors  (cost=4.18..12.64 rows=4 width=8)                     
+				 Recheck Cond: (book_id = '1'::bigint)                                            
+				 ->  Bitmap Index Scan on index_authors_on_book_id  (cost=0.00..4.18 rows=4 width=0)
+				       Index Cond: (book_id = '1'::bigint)                                        
+				  
+				  
+      eg :- 3.2.1 :072 > Book.where(book_type: 'fiction').explain
+  		   Book Load (0.4ms)  SELECT "books".* FROM "books" WHERE "books"."book_type" = $1  [["book_type", "fiction"]]
+
+   OUTPUT :-                                    
+		EXPLAIN for: SELECT "books".* FROM "books" WHERE "books"."book_type" = $1 [["book_type", "fiction"]]
+				      QUERY PLAN        
+		-------------------------------------------------------
+		 Seq Scan on books  (cost=0.00..18.50 rows=3 width=92)
+		   Filter: ((book_type)::text = 'fiction'::text)
+		
+--------------------------------------------------------------------------------------------------------------------------------
+						  	    Remaining queries  
+						  		
+ 1). Annotate :-
+ -> Adds an SQL comment to queries generated from this relation.
+ 
+ 	eg :- 3.2.1 :073 > Book.annotate("selecting user names").select(:name)
+	  Book Load (0.4ms)  SELECT "books"."name" FROM "books" /* selecting user names */
+	
+     	     output :- 
+		[#<Book:0x00007fe04b6d2800 id: nil, name: "The Hobbit ">,
+		 #<Book:0x00007fe04b6d2760 id: nil, name: "And Then There Were None">,
+		 #<Book:0x00007fe04b6d26c0 id: nil, name: "The Little Prince">,
+		 #<Book:0x00007fe04b6d2620 id: nil, name: "A Tale Of Two Cities">,
+		 #<Book:0x00007fe04b6d2580 id: nil, name: "Harry Potter and the Sorcerer’s Stone">,
+		 #<Book:0x00007fe04b6d24e0 id: nil, name: "Harry potter">,
+		 #<Book:0x00007fe04b6d2440 id: nil, name: "A Revenue Stamp">,
+		 #<Book:0x00007fe04b6d2300 id: nil, name: "War and Peace">] 
+		 
+ 2). create_with :-
+ -> Sets attributes to be used when creating new records from a relation object.
+ 
+ 	eg :- 3.2.1 :077 > author = Author.create_with(name: 'sachin')
+	      Author Load (0.5ms)  SELECT "authors".* FROM "authors"
+		                                                 
+	      3.2.1 :078 > author.new.name
+	      	output => "sachin" 
+	      	
+ 3). optimizer_hints :- 
+  -> the optimizer_hints method is used to add database-specific hints to a database query to help the database optimizer 
+     choose a more efficient query plan. 
+     
+     	eg :- 3.2.1 :079 > Book.where(name: 'Harry potter').optimizer_hints('USE INDEX (index_name)')
+		  Book Load (0.4ms)  SELECT /*+ USE INDEX (index_name) */ "books".* FROM "books" WHERE "books"."name" = $1  [["name",
+		  "Harry potter"]]
+	
+	      output :-                           
+		  id: 1,                                              
+		  name: "Harry potter",                               
+		  book_type: "0",                                     
+		  created_at: Thu, 30 Mar 2023 08:49:06.338483000 UTC +00:00,
+		  updated_at: Tue, 04 Apr 2023 13:09:19.805056000 UTC +00:00,
+		  lock_version: 4>] 
+		  		   

@@ -1,0 +1,277 @@
+--------------------------------------------------------------- class Time ---------------------------------------------------------------
+
+ -> The Time class represents dates and times in Ruby. 
+ -> It is a thin layer over the system date and time functionality provided by the operating system. 
+ -> This class may be unable on your system to represent dates before 1970 or after 2038.
+ 
+ -> A Time object represents a date and time :-
+ 	syntax :- Time.new(YYYY,MM,DD,HH,MM,SS)
+ 	
+ 	eg :-
+ 		3.2.1 :002 > Time.new(2000,1,1,0,0,0)
+ 		 => 2000-01-01 00:00:00 +0530              # +0530 is GMT.s
+ 		 
+ 1). Accessing each element in time :-
+ 	
+ 	eg:-
+ 		3.2.1 :003 > t = Time.new(2000,1,1,0,0,0)
+		 => 2000-01-01 00:00:00 +0530 
+		 
+		3.2.1 :004 > t.year
+		 => 2000 
+		3.2.1 :005 > t.month
+		 => 1 
+		3.2.1 :006 > t.mday
+		 => 1 
+		3.2.1 :007 > t.hour
+		 => 0 
+		3.2.1 :008 > t.min
+		 => 0 
+		3.2.1 :009 > t.sec
+		 => 0 
+		3.2.1 :010 > t.subsec
+ 		 => 0 
+ 		 
+ 2). Epoch Seconds :-
+ 
+	-> Epoch seconds is the exact number of seconds (including fractional subseconds) since the Unix Epoch, January 1, 1970.
+	-> You can retrieve that value exactly using method Time.to_r:
+
+	eg:-
+		3.2.1 :011 > Time.at(0).to_r
+		 => (0/1) 
+		3.2.1 :012 > Time.at(0.999999).to_r
+		 => (9007190247541737/9007199254740992) 
+		
+	-> Other retrieval methods such as Time#to_i and Time#to_f may return a value that rounds or truncates subseconds.
+	
+	eg:-
+		3.2.1 :013 > Time.at(0.999999).to_f
+		 => 0.999999 
+		3.2.1 :014 > Time.at(0.999999).to_i
+		 => 0 
+		 
+ 3). Time Resolution :-
+ 
+ -> A Time object derived from the system clock (for example, by method Time.now) has the resolution supported by the system.
+ 	eg:-
+ 		3.2.1 :015 > Time.now
+		 => 2023-03-06 13:19:47.633533513 +0530 
+		 
+	a). Creating a New Time Instance :-
+	
+	-> You can create a new instance of Time with Time.new. 
+	-> This will use the current system time. 
+	-> Time.now is an alias for this. 
+	-> You can also pass parts of the time to Time.new such as year, month, minute, etc. 
+	-> When you want to construct a time this way you must pass at least a year. 
+	-> If you pass the year with nothing else time will default to January 1 of that year at 00:00:00 with the current system timezone.
+	
+		eg:-
+		3.2.1 :016 > Time.new(2002)      	#only year is provided
+		 => 2002-01-01 00:00:00 +0530 	
+		3.2.1 :017 > Time.new(2002,10)	#year and month
+		 => 2002-10-01 00:00:00 +0530 
+		3.2.1 :018 > Time.new(2002,10,31)	#year,month and date
+		 => 2002-10-31 00:00:00 +0530 
+
+		3.2.1 :021 > Time.new(2002,10,31,2,2,2, "+02:00")     #You can pass a UTC offset
+		 => 2002-10-31 02:02:02 +0200 
+		 
+	b). Working with an Instance of Time :-
+	
+	-> Once you have an instance of Time there is a multitude of things you can do with it. 
+	
+		eg:-
+		3.2.1 :023 > t = Time.new(1995,05,25,15,5,5, "+05:00")
+		=> 1995-05-25 15:05:05 +0500 
+		
+		*). Was that a monday?
+		        eg:-
+			3.2.1 :024 > t.monday?
+			 => false 
+		
+		*). What year was that again?
+			eg:-
+			3.2.1 :025 > t.year
+			 => 1995 
+		
+		*). Was it daylight savings at the time?
+			eg:-
+			3.2.1 :026 > t.dst?
+			 => false 
+		
+		*). What’s the day a year later?
+			eg:-
+			3.2.1 :027 > t + (60*60*24*365)
+			 => 1996-05-24 15:05:05 +0500 
+		
+		*). How many seconds was that since the Unix Epoch?
+			eg:-
+			3.2.1 :028 > t.to_i
+			 => 801396305 
+		
+		*). You can also do standard functions like compare two times.
+			eg:-
+			3.2.1 :029 > t1 = Time.new(2010)
+			 => 2010-01-01 00:00:00 +0530 
+			3.2.1 :030 > t2 = Time.new(2011)
+			 => 2011-01-01 00:00:00 +0530 
+			3.2.1 :031 > t1 == t2
+			 => false 
+			3.2.1 :032 > t1 == t1
+			 => true 
+			3.2.1 :033 > t1 < t2
+			 => true 
+			3.2.1 :034 > t1 > t2
+			 => false 
+			3.2.1 :035 > Time.new(2010,10,31).between?(t1,t2)
+			 => true 
+
+---------------------------------------------------------- class Date ---------------------------------------------------------------
+
+-> Class Date provides methods for storing and manipulating calendar dates.
+-> Consider using class Time instead of class Date if:
+	*). You need both dates and times; Date handles only dates.
+-> A Date object, once created, is immutable, and cannot be modified.
+
+ 1). Creating a Date:-
+ 
+	a). You can create a date for the current date, using Date.today:
+	
+		eg:-
+		3.2.1 :099 > Date.today
+		 => #<Date: 2023-03-06 ((2460010j,0s,0n),+0s,2299161j)> 
+		
+	b). Date.new takes integer year, month, and day-of-month:
+	
+		eg:-
+		3.2.1 :100 > Date.new(2012,10,27)
+		 => #<Date: 2012-10-27 ((2456228j,0s,0n),+0s,2299161j)> 
+
+	c). Date.ordinal takes integer year and day-of-year:
+	
+		eg:-
+		3.2.1 :101 > Date.ordinal(2012,365)
+		 => #<Date: 2012-12-30 ((2456292j,0s,0n),+0s,2299161j)> 
+		
+	d). Date.jd takes integer Julian day:
+	
+		eg:-
+		3.2.1 :105 > Date.jd(2451544)
+		 => #<Date: 1999-12-31 ((2451544j,0s,0n),+0s,2299161j)> 
+
+	e). Date.commercial takes integer commercial data (year, week, day-of-week):
+	
+		eg:-
+		3.2.1 :106 > Date.commercial(2002,48,3)
+		 => #<Date: 2002-11-27 ((2452606j,0s,0n),+0s,2299161j)> 
+
+	f). Date.parse takes a string, which it parses heuristically:
+	
+		eg:-
+		3.2.1 :107 > Date.parse("2002-11-3")
+		 => #<Date: 2002-11-03 ((2452582j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :108 > Date.parse("31-12-1992")
+		 => #<Date: 1992-12-31 ((2448988j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :109 > Date.parse("1992-365")
+		 => #<Date: 1992-12-30 ((2448987j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :110 > Date.parse("1992-W52-3")
+		 => #<Date: 1992-12-23 ((2448980j,0s,0n),+0s,2299161j)> 
+
+	g). Date.strptime takes a date string and a format string, then parses the date string according to the format string:
+	
+		eg:-
+		3.2.1 :113 > Date.strptime('2001-12-31','%Y-%m-%d')
+		 => #<Date: 2001-12-31 ((2452275j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :114 > Date.strptime('31-12-2001','%d-%m-%Y')
+		 => #<Date: 2001-12-31 ((2452275j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :116 > Date.strptime('2001-365','%Y-%j')
+		 => #<Date: 2001-12-31 ((2452275j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :117 > Date.strptime('2001-W52-5','%G-W%V-%u')
+		 => #<Date: 2001-12-28 ((2452272j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :118 > Date.strptime('2001 12 31','%Y %U %w')
+		 => #<Date: 2001-03-28 ((2451997j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :119 > Date.strptime('2001 12 31','%Y %W %u')
+		 => #<Date: 2001-03-21 ((2451990j,0s,0n),+0s,2299161j)> 
+		 
+		3.2.1 :120 > Date.strptime('fri31dec99','%a%d%b%y')
+		 => #<Date: 1999-12-31 ((2451544j,0s,0n),+0s,2299161j)> 
+
+--------------------------------------------------------------------------------------------------------------------------------------
+							  Class DateTime
+								
+ -> A subclass of Date that easily handles date, hour, minute, second, and offset.
+ -> DateTime class is considered deprecated. Use Time class.
+ -> DateTime does not consider any leap seconds, does not track any summer time rules.
+ 
+ 1). Creating datetime:-
+ 
+ 	eg:-
+ 	3.2.1 :139 > DateTime.new(2001,2,3,4,5,6)
+	 => #<DateTime: 2001-02-03T04:05:06+00:00 ((2451944j,14706s,0n),+0s,2299161j)>     
+	                                              
+	3.2.1 :140 > DateTime.new(2001,2,3.5)
+	 => #<DateTime: 2001-02-03T12:00:00+00:00 ((2451944j,43200s,0n),+0s,2299161j)>   
+	                                                                    
+	3.2.1 :141 > DateTime.new(2001,2,3,4,5,6,'+03:00')
+	 => #<DateTime: 2001-02-03T04:05:06+03:00 ((2451944j,3906s,0n),+10800s,2299161j)>   
+	 
+ 2). A DateTime object has various methods:-
+ 
+ 	eg:-
+ 	3.2.1 :142 > d = DateTime.parse('3rd Feb 2001 04:05:06+03:30')
+	 => #<DateTime: 2001-02-03T04:05:06+03:30 ((2451944j,2106s,0n),+12600... 
+	3.2.1 :143 > d.hour
+	 => 4 
+	3.2.1 :144 > d.min
+	 => 5 
+	3.2.1 :145 > d.minute
+	 => 5 
+	3.2.1 :146 > d.sec
+	 => 6 
+	3.2.1 :147 > d.second
+	 => 6 
+	3.2.1 :148 > d.offset
+	 => (7/48) 
+	3.2.1 :149 > d.zone
+	 => "+03:30" 
+	 
+	 
+	useful methods:-
+	
+	*). 3.2.1 :150 > DateTime.now
+	  => #<DateTime: 2023-03-06T18:35:55+05:30 ((2460010j,47155s,440809393n),+19800s,2299161j)>        
+	                                 
+	*). 3.2.1 :151 > DateTime.ordinal
+	  => #<DateTime: -4712-01-01T00:00:00+00:00 ((0j,0s,0n),+0s,2299161j)> 
+	  
+	*). 3.2.1 :152 > DateTime.parse('20010203T040506+0700')
+	  => #<DateTime: 2001-02-03T04:05:06+07:00 ((2451943j,75906s,0n),+25200s,2299161j)>      
+	                                          
+	*). 3.2.1 :153 > DateTime.parse('3rd Feb 2001 04:05:06 PM')
+	  => #<DateTime: 2001-02-03T16:05:06+00:00 ((2451944j,57906s,0n),+0s,2299161j)>            
+	                                        
+	*). 3.2.1 :154 > DateTime.httpdate('Sat, 03 Feb 2001 04:05:06 GMT')
+	  => #<DateTime: 2001-02-03T04:05:06+00:00 ((2451944j,14706s,0n),+0s,2299161j)>   
+	  
+	*). 3.2.1 :155 > DateTime.now.strftime     #provide datetime in string form
+	  => "2023-03-06T18:56:04+05:30" 
+        
+       
+
+
+
+
+
+
+
+

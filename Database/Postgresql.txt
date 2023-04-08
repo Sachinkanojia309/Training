@@ -1,0 +1,1264 @@
+
+->It is an open-source object-relational database managment system.
+->allow to store, process and retrieve data safely.
+
+1. To install Postgresql 
+	-> Sudo apt install postgresql postgresql-contrib
+
+2. To go into postgres
+	->sudo -u postgres psql
+	
+3. To check version :- select version();
+	-> 12.13
+	
+4. To check services:-
+	-> service postgresql
+	
+5. For status :-
+	-> service postgresql status.
+	
+6. Postgres Commands :-
+	\l               - List of databases.
+	\du              - List of users.
+	\c database_name - To go and switch database.
+	\t or \dt        - List the tables or relations.
+	\d table_name    - Describe the table.
+	\t               - used to on/off the column names.
+	
+-------------------------------------------------------------ALL ABOUT USER---------------------------------------------------------------
+	
+7. Go to root user and owner ship of database:-
+	-> sudo su postgres
+	-> ALTER DATABASE name_of_db OWNER TO name_of_new_owner
+	
+8. Change password of user :-
+	-> ALTER USER postgres WITH PASSWORD "changeit";
+	
+9. Create new user :-
+	-> CREATE USER sachin WITH PASSWORD "changeit";
+	
+10. Make user as superuser :-
+	-> ALTER USER sachin WITH SUPERUSER:
+	
+11. Remove user :-
+	-> DROP USER sachin;
+	
+--------------------------------------------------------------DATA TYPE-------------------------------------------------------------------
+					
+12. Benefits of Data type:-
+	Consistency − Operations against columns of same data type give consistent results and are usually the fastest.
+
+	Validation  − Proper use of data types implies format validation of data and rejection of data outside the scope of data type.
+
+	Compactness − As a column can store a single type of value, it is stored in a compact way.
+
+	Performance − Proper use of data types gives the most efficient storage of data. The values stored can be processed quickly, 			      which enhances the performance.
+	
+-> NUMERIC TYPE
+
+	Name			Storage Size	Description				Range
+	smallint		2 bytes	small-range integer			-32768 to +32767
+	
+	integer		4 bytes	typical choice for integer		-2147483648 to +2147483647
+	
+	bigint			8 bytes	large-range integer			-9223372036854775808 to 9223372036854775807
+	
+	decimal		variable	user-specified precision,exact	up to 131072 digits before the decimal point; up to 												16383 digits after the decimal point
+	
+	numeric		variable	user-specified precision,exact	up to 131072 digits before the decimal point; up to 												16383 digits after the decimal point
+	
+	real			4 bytes	variable-precision,inexact		6 decimal digits precision
+	
+	double precision	8 bytes	variable-precision,inexact		15 decimal digits precision
+	
+	smallserial		2 bytes	small autoincrementing integer	1 to 32767
+	
+	serial			4 bytes	autoincrementing integer		1 to 2147483647
+	
+	bigserial		8 bytes	large autoincrementing integer	1 to 9223372036854775807
+	
+	
+-> CHARACTER TYPE
+
+	S.No.	        Name & Description
+	1		character varying(n), varchar(n)
+			variable-length with limit
+
+	2		character(n), char(n)
+			fixed-length, blank padded
+
+	3		text 
+			variable unlimited length
+			
+-> DATE/TIME TYPE
+	
+	Name		       		Storage Size		Description			Low Value		High Value
+	timestamp [(p)] 
+	[without time zone ]			8 bytes	both date and time (no time zone)	4713 BC		294276 AD
+	
+	TIMESTAMPTZ				8 bytes	both date and time, with time zone	4713 BC		294276 AD
+
+	date					4 bytes	date (no time of day)			4713 BC		5874897 AD
+
+	time [ (p)] [ without time zone ]	8 bytes	time of day (no date)			00:00:00		24:00:00
+
+	time [ (p)] with time zone		12 bytes	times of day only, with time zone	00:00:00+1459		24:00:00-1459
+
+	interval [fields ] [(p) ]		12 bytes	time interval			       -178000000 years       178000000 years
+	
+	
+----------------------------------------------------------------DATABASE------------------------------------------------------------------
+
+13. TO create database    :-  CREATE DATABASE beryl-system;
+14. To connect database   :-  \c beryl-system;
+15. To drop database	   :-  DROP DATABASE beryl-system;
+
+
+16.To create table   :- create table employee(ID BIGSERIAL
+			 CREATE TABLE employee(id BIGSERIAL NOT NULL PRIMARY KEY,
+			 first_name VARCHAR(50) NOT NULL,
+			 last_name VARCHAR(50) NOT NULL,
+			 gender VARCHAR(10) NOT NULL,
+			 date_of_birth DATE NOT NULL,
+			 email VARCHAR(150));
+			 
+17. To insert into table :-    INSERT INTO employee(first_name,last_name,gender,date_of_birth,email)
+				VALUES('Sachin','Kanojia','Male', '2001-01-05','sachin.kanojia@berylsystems.com'),
+				('Ram','kumar','Male','1999-10-07','ram@gmail.com'),
+				('Rahul','Dev','male','1990-04-22','rahul@gmail.com'),
+				('Reeta','Singh','female','1998-10-19','reeta@gmail.com'),
+				('Neeraj','Kumar','Male', '2001-05-10','neeraj.kumar@berylsystems.com');
+				
+18. ADD column in table :-  ALTER TABLE employee ADD COLUMN age varchar(100);
+
+
+ id | first_name | last_name | gender | date_of_birth |              email              | age 
+----+------------+-----------+--------+---------------+---------------------------------+-----
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 
+  6 | sita       | rao       | female | 2003-01-05    | sita@gmail.com                  | 
+(6 rows)
+
+
+19. DROP column in table :- ALTER TABLE employee DROP COLUMN age;
+
+20. Update the table  :- UPDATE employee SET age = AGE(now(),date_of_birth) where id between 2 and 6 ;
+
+NOTE :- Modify the table  :- ALTER TABLE table_name MODIFY column_name datatype NOT NULL;
+
+	ADD UNIQUE CONSTRAINT to a table :- ALTER TABLE table_name ADD CONSTRAINT MyUniqueConstraint UNIQUE(column1, column2...);
+	
+	
+
+ id | first_name | last_name | gender | date_of_birth |              email              |                  age                   
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 20
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:16:32.12658
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:16:32.12658
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:16:32.12658
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:16:32.12658
+  6 | sita       | rao       | female | 2003-01-05    | sita@gmail.com                  | 20 years 30 days 15:16:32.12658
+(6 rows)
+
+
+21. For change the type of column :- ALTER TABLE employee ALTER COLUMN age TYPE bigint;
+
+    varchar to integer :- ALTER TABLE employee ALTER COLUMN salary TYPE integer USING salary::integer;
+    
+    ALTER TABLE department DROP COLUMN id , ADD COLUMN id BIGSERIAL PRIMARY KEY NOT NULL;
+				
+22. TO content of table  :- select * from employee;
+
+23. OPERATORS:- 
+	Arithmetic operators :- +,-,*,/,%,^, |/ (square root), ||/ (cube root) , ! 
+	Comparison operators :- =,!=,<>,>,<,>=,<=
+	Logical operators    :- AND , NOT, OR
+	Bitwise operators    :- &,|,~,<<,>> ,#
+
+24. WHERE CLAUSE:-
+-> It is used to filter the search.
+-> used with select, update ,delete etc.
+
+	eg:- print first and last name with age , whose gender is female.
+	  :- select first_name,last_name,age from employee where gender = 'female';
+	
+ first_name | last_name |                  age                   
+------------+-----------+----------------------------------------
+ Reeta      | Singh     | 24 years 3 mons 16 days 15:26:59.39971
+ sita       | rao       | 20 years 30 days 15:26:59.39971
+(2 rows)
+
+
+25. AND , OR CLAUSE :-
+AND -: all the conditions must be true;
+OR  -: One condition must be true;
+
+ eg1 :- print details of employee whose gender is male and last name is kumar.
+     :- select * from employee where gender = 'Male' and last_name = 'kumar';
+    
+ id | first_name | last_name | gender | date_of_birth |     email     |                  age                   
+----+------------+-----------+--------+---------------+---------------+----------------------------------------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com | 23 years 3 mons 28 days 15:26:59.39971
+(1 row)
+
+
+ eg2 :- print details of employee whose gender is male or last name is kumar.
+     :- select * from employee where gender = 'Male' or last_name = 'kumar';
+     
+     
+ id | first_name | last_name | gender | date_of_birth |              email              |                  age                   
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971
+(3 rows)
+
+
+25. DELETE CLAUSE :-
+-> DELETE query to delete the selected rows.
+
+ eg :- delete the employee whose id is 6.
+    :- delete from employee where id = 6;
+    
+id | first_name | last_name | gender | date_of_birth |              email              |                  age                   | salary  
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------+---------
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971        | 2500000
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971 | 200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:26:59.39971 | 300000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:26:59.39971 | 400000
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971 | 500000
+(5 rows)
+
+
+26. LIKE CLAUSE :-
+
+	S.No.		Statement & Description
+	
+	1		WHERE SALARY::text LIKE '200%'
+			Finds any values that start with 200
+
+	2		WHERE SALARY::text LIKE '%200%'
+			Finds any values that have 200 in any position
+
+	3		WHERE SALARY::text LIKE '_00%'
+			Finds any values that have 00 in the second and third positions
+
+	4		WHERE SALARY::text LIKE '2_%_%'
+			Finds any values that start with 2 and are at least 3 characters in length
+
+	5		WHERE SALARY::text LIKE '%2'
+			Finds any values that end with 2
+
+	6		WHERE SALARY::text LIKE '_2%3'
+			Finds any values that have 2 in the second position and end with a 3
+
+	7		WHERE SALARY::text LIKE '2___3'
+			Finds any values in a five-digit number that start with 2 and end with 3
+			
+eg :-  print details of employee whose email ends with gmail.com
+   :-  select * from employee where email like '%gmail.com';
+       
+ id | first_name | last_name | gender | date_of_birth |      email      |                  age                   | salary 
+----+------------+-----------+--------+---------------+-----------------+----------------------------------------+--------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com   | 23 years 3 mons 28 days 15:26:59.39971 | 200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com | 32 years 9 mons 12 days 15:26:59.39971 | 300000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com | 24 years 3 mons 16 days 15:26:59.39971 | 400000
+(3 rows)
+
+
+27. LIMIT CLAUSE :-
+-> LIMIT clause is used to limit the data amount returned by the SELECT statement.
+
+eg1 :-  display details of top 2 employees in table
+    :-  select *from employee limit 2;
+	
+ id | first_name | last_name | gender | date_of_birth |      email      |                  age                   | salary 
+----+------------+-----------+--------+---------------+-----------------+----------------------------------------+--------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com   | 23 years 3 mons 28 days 15:26:59.39971 | 200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com | 32 years 9 mons 12 days 15:26:59.39971 | 300000
+(2 rows)
+
+
+eg2 :- display details of employees after 2 from the top;
+    :- select *from employee limit 2 offset 2;
+
+ id | first_name | last_name | gender | date_of_birth |             email             |                  age                   | salary 
+----+------------+-----------+--------+---------------+-------------------------------+----------------------------------------+--------
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com               | 24 years 3 mons 16 days 15:26:59.39971 | 400000
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com | 21 years 8 mons 25 days 15:26:59.39971 | 500000
+(2 rows)
+
+
+28. ORDER BY :-
+-> provide order according to the attribute in ascending and descending.
+-> by default it is ascending.
+
+eg1 :- SELECT * FROM employee ORDER BY id DESC; 
+
+id | first_name | last_name | gender | date_of_birth |              email              |                  age                   | salary  
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------+---------
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971 | 500000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:26:59.39971 | 400000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:26:59.39971 | 300000
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971 | 200000
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971        | 2500000
+(5 rows)
+
+
+29. GROUP BY :-
+-> GROUP BY clause is used in collaboration with the SELECT statement to group together those rows in a table that have identical data.
+-> The GROUP BY clause must follow the conditions in the WHERE clause and must precede the ORDER BY clause if one is used.
+
+ id | first_name | last_name | gender | date_of_birth |              email              |                  age                   |salary  
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------+---------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971 | 200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:26:59.39971 | 300000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:26:59.39971 | 400000
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971 | 500000
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971        | 2500000
+  7 | Ram        | singh     | male   | 2003-12-27    |                                 |                                        | 23400
+  8 | Reeta      | kumari    | female | 1998-05-31    |                                 |                                        | 876000
+(7 rows)
+
+
+	syntax:- SELECT column-list
+		 FROM table_name
+		 WHERE [ conditions ]
+		 GROUP BY column1, column2....columnN
+		 ORDER BY column1, column2....columnN
+		 
+	eg :- select first_name , sum(salary) from employee group by first_name;
+	
+		 first_name |   sum   
+		------------+---------
+		 Sachin     | 2500000
+		 Rahul      |  300000
+		 Neeraj     |  500000
+		 Reeta      | 1276000
+		 Ram        |  223400
+		(5 rows)
+
+30. WITH CLAUSE:- 
+-> with clause is used for defining a temporary relation such that the output of this temporary relation is available and is used by the 	 query that is associated with the WITH clause.
+-> helps to make complex query simpler , 
+-> eg :- without group by clause using avg of any attribute.
+
+	syntax :- WITH temp_table_name as (select column_name which is want in temp_table from main_table)
+	       :- select * from temp_table_name;
+
+	eg1:- WITH salary_table as(select first_name,last_name,salary from employee)
+	      select * from salary_table;
+	      
+		 first_name | last_name | salary  
+		------------+-----------+---------
+		 Ram        | kumar     |  200000
+		 Rahul      | Dev       |  300000
+		 Reeta      | Singh     |  400000
+		 Neeraj     | Kumar     |  500000
+		 Sachin     | Kanojia   | 2500000
+		 Ram        | singh     |   23400
+		 Reeta      | kumari    |  876000
+		(7 rows)
+
+31. HAVING CLAUSE :-
+-> The HAVING clause allows us to pick out particular rows where the function's result meets some condition.
+-> The WHERE clause places conditions on the selected columns, whereas the HAVING clause places conditions on groups created by the GROUP BY clause.
+
+	Format :- SELECT FROM WHERE GROUP BY HAVING ORDER BY
+	Syntax :- SELECT column1, column2
+		  FROM table1, table2
+		  WHERE [ conditions ]
+		  GROUP BY column1, column2
+		  HAVING [ conditions ]
+		  ORDER BY column1, column2
+		  
+	eg :- select first_name from employee group by first_name having count(first_name)>1;
+		 first_name 
+		------------
+		 Reeta
+		 Ram
+		(2 rows)
+
+	eg2 :- select first_name,avg(salary) from employee group by first_name having count(first_name)>1;
+		 first_name |         avg         
+		------------+---------------------
+		 Reeta      | 638000.000000000000
+		 Ram        | 111700.000000000000
+		(2 rows)
+
+32. DISTINCT CLAUSE :-
+-> The PostgreSQL DISTINCT keyword is used in conjunction with SELECT statement to eliminate all the duplicate records and fetching only 	 unique records.
+
+	syntax :- SELECT DISTINCT column1, column2,.....columnN
+		  FROM table_name
+		  WHERE [condition]
+		  
+	eg:- select distinct first_name from employee;
+		 first_name 
+		------------
+		 Sachin
+		 Rahul
+		 Neeraj
+		 Reeta
+		 Ram
+		(5 rows)
+-------------------------------------------------------ADVANCE POSTGRESQL-----------------------------------------------------------------
+						
+33. CONSTRAINTS :-
+->Constraints are the rules enforced on data columns on table. These are used to prevent invalid data from being entered into the database. This ensures the accuracy and reliability of the data in the database.
+
+-> Constraints could be column level or table level.
+
+	The following are commonly used constraints available in PostgreSQL.
+	NOT NULL Constraint  − Ensures that a column cannot have NULL value.
+	UNIQUE Constraint    − Ensures that all values in a column are different.
+	PRIMARY Key          − Uniquely identifies each row/record in a database table.
+	FOREIGN Key          − Constrains data based on columns in other tables.
+	
+				eg:- EMP_ID  INT  references COMPANY6(ID)
+				
+	CHECK Constraint     − The CHECK constraint ensures that all values in a column satisfy certain conditions.
+	EXCLUSION Constraint − The EXCLUDE constraint ensures that if any two rows are compared on the specified column(s) or 					expression(s) using the specified operator(s), not all of these comparisons will return TRUE.
+	DEFAULT              − use as by default.
+	
+				eg:- SALARY  REAL DEFAULT 50000.00
+		
+	CHECK                − SALARY REAL CHECK(SALARY > 0)  to check some condition .
+
+-> Dropping Constraints
+	syntax :- ALTER TABLE table_name DROP CONSTRAINT some_name;
+	
+34. JOINS :-
+-> Joins clause is used to combine records from two or more tables in a database.
+-> Types in PostgreSQL are 
+
+	The CROSS JOIN
+	The INNER JOIN
+	The LEFT OUTER JOIN
+	The RIGHT OUTER JOIN
+	The FULL OUTER JOIN
+
+
+Now we have two tables:-----
+----------------------------------------------------------EMPLOYEE TABLE------------------------------------------------------------------
+
+id | first_name | last_name | gender | date_of_birth |              email              |                  age                   | salary  
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------+---------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971 |  200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:26:59.39971 |  300000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:26:59.39971 |  400000
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971 |  500000
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971        | 2500000
+  7 | Ram        | singh     | male   | 2003-12-27    |                                 |                                        |   23400
+  8 | Reeta      | kumari    | female | 1998-05-31    |                                 |                                        |  876000
+(7 rows)
+
+----------------------------------------------------------DEPARTMENT TABLE----------------------------------------------------------------
+
+ dept_name | emp_id | id 
+-----------+--------+----
+ IT        |      1 |  1
+ IT        |      2 |  2
+ HR        |      3 |  3
+ support   |      4 |  4
+ HR        |      5 |  5
+ Tech      |      6 |  6
+ IT        |      7 |  7
+ Tech      |      8 |  8
+(8 rows)
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+	a). CROSS JOIN:- A CROSS JOIN matches every row of the first table with every row of the second table.
+		      :- If the input tables have x and y columns, respectively, the resulting table will have x+y columns.
+		      
+		      syntax :- SELECT ... FROM table1 CROSS JOIN table2 ...
+		      
+		      eg:- select first_name,last_name,emp_id,dept_name from employee cross join department where dept_name = 'HR';
+		      
+				 first_name | last_name | emp_id | dept_name 
+				------------+-----------+--------+-----------
+				 Ram        | kumar     |      3 | HR
+				 Rahul      | Dev       |      3 | HR
+				 Reeta      | Singh     |      3 | HR
+				 Neeraj     | Kumar     |      3 | HR
+				 Sachin     | Kanojia   |      3 | HR
+				 Ram        | singh     |      3 | HR
+				 Reeta      | kumari    |      3 | HR
+				 Ram        | kumar     |      5 | HR
+				 Rahul      | Dev       |      5 | HR
+				 Reeta      | Singh     |      5 | HR
+				 Neeraj     | Kumar     |      5 | HR
+				 Sachin     | Kanojia   |      5 | HR
+				 Ram        | singh     |      5 | HR
+				 Reeta      | kumari    |      5 | HR
+				 
+	b). INNER JOIN:- The query compares each row of table1 with each row of table2 to find all pairs of rows, which satisfy the join-predicate
+		      :- An INNER JOIN is the most common type of join and is the default type of join.
+		      
+		      syntax :- SELECT table1.column1, table2.column2... FROM table1 INNER JOIN table2 ON table1.common_filed =
+		      		 table2.common_field;
+		      		 
+		      eg:- select emp_id,first_name,last_name,salary from employee inner join department on employee.id = 				   department.emp_id where salary >400000;
+		      
+				 emp_id | first_name | last_name | salary  
+				--------+------------+-----------+---------
+				      1 | Sachin     | Kanojia   | 2500000
+				      5 | Neeraj     | Kumar     |  500000
+				      8 | Reeta      | kumari    |  876000
+				(3 rows)
+
+	c). LEFT OUTER JOIN :- In case of LEFT OUTER JOIN, an inner join is performed first. Then, for each row in table T1 that does not 			       satisfy the join condition with any row in table T2, a joined row is added with null values in columns of T2
+			     
+		      syntax :- SELECT ... FROM table1 LEFT OUTER JOIN table2 ON conditional_expression ...
+			  
+		      eg:- select emp_id,first_name,last_name,dept_name from employee left outer join department on employee.id = 					department.emp_id;
+		      
+				 emp_id | first_name | last_name | dept_name 
+				--------+------------+-----------+-----------
+				      1 | Sachin     | Kanojia   | IT
+				      2 | Ram        | kumar     | IT
+				      3 | Rahul      | Dev       | HR
+				      4 | Reeta      | Singh     | support
+					| Neeraj     | Kumar     | 
+					| Reeta      | kumari    | 
+					| Ram        | singh     | 
+
+	d). RIGHT OUTER JOIN :- similar to left join but for right table.
+			
+		     syntax :- SELECT ... FROM table1 RIGHT OUTER JOIN table2 ON conditional_expression ...
+		    
+		     eg:- select emp_id,first_name,last_name,dept_name from employee right outer join department on employee.id = 				  department.emp_id;
+		     
+				 emp_id | first_name | last_name | dept_name 
+				--------+------------+-----------+-----------
+				      1 | Sachin     | Kanojia   | IT
+				      2 | Ram        | kumar     | IT
+				      3 | Rahul      | Dev       | HR
+				      4 | Reeta      | Singh     | support
+	
+	e). FULL OUTER JOIN :- or each row in table T1 that does not satisfy the join condition with any row in table T2, a joined row is 				added with null values in columns of T2. In addition, for each row of T2 that does not satisfy the join 					condition with any row in T1, a joined row with null values in the columns of T1 is added.	
+		
+		     syntax :- SELECT ... FROM table1 FULL OUTER JOIN table2 ON conditional_expression ...
+		     
+		     eg:- select emp_id,first_name,last_name,dept_name from employee full outer join department on employee.id = 				  department.emp_id;
+		     
+				 emp_id | first_name | last_name | dept_name 
+				--------+------------+-----------+-----------
+				      1 | Sachin     | Kanojia   | IT
+				      2 | Ram        | kumar     | IT
+				      3 | Rahul      | Dev       | HR
+				      4 | Reeta      | Singh     | support
+					| Neeraj     | Kumar     | 
+					| Reeta      | kumari    | 
+					| Ram        | singh     | 
+------------------------------------------------------------------------------------------------------------------------------------------ 	
+35. UNION CLAUSE :- 
+->UNION clause/operator is used to combine the results of two or more SELECT statements without returning any duplicate rows.
+	
+	syntax :- SELECT column1 [, column2 ] FROM table1 [, table2 ] [WHERE condition]
+			UNION
+		  SELECT column1 [, column2 ] FROM table1 [, table2 ] [WHERE condition]
+      		  
+      	eg :- select emp_id,first_name,salary,dept_name from employee inner join department on employee.id = department.emp_id UNION 
+	      select emp_id,first_name,salary,dept_name from employee left outer join department on employee.id = department.emp_id;
+	      
+				 emp_id | first_name | salary  | dept_name 
+				--------+------------+---------+-----------
+				      7 | Ram        |   23400 | IT
+				      1 | Sachin     | 2500000 | IT
+				      4 | Reeta      |  400000 | support
+				      2 | Ram        |  200000 | IT
+				      3 | Rahul      |  300000 | HR
+				      5 | Neeraj     |  500000 | HR
+				      8 | Reeta      |  876000 | Tech
+
+(@)->  UNION ALL -> combine the results of two or more select statements with duplicate rows.
+
+	eg :- select emp_id,first_name,salary,dept_name from employee inner join department on employee.id = department.emp_id UNION  
+	      ALL select emp_id,first_name,salary,dept_name from employee left outer join department on employee.id = department.emp_id;
+	      
+				 emp_id | first_name | salary  | dept_name 
+				--------+------------+---------+-----------
+				      1 | Sachin     | 2500000 | IT
+				      2 | Ram        |  200000 | IT
+				      3 | Rahul      |  300000 | HR
+				      4 | Reeta      |  400000 | support
+				      5 | Neeraj     |  500000 | HR
+				      7 | Ram        |   23400 | IT
+				      8 | Reeta      |  876000 | Tech
+				      1 | Sachin     | 2500000 | IT
+				      2 | Ram        |  200000 | IT
+				      3 | Rahul      |  300000 | HR
+				      4 | Reeta      |  400000 | support
+				      5 | Neeraj     |  500000 | HR
+				      7 | Ram        |   23400 | IT
+				      8 | Reeta      |  876000 | Tech
+				      
+------------------------------------------------------------------------------------------------------------------------------------------
+
+ 36. NULL :- 
+ -> NULL is the term used to represent a missing value. A NULL value in a table is a value in a field that appears to be blank.
+ 
+ 	a). IS NOT NULL operator to list down all the records where attribute is not NULL.
+ 		 
+ 	    eg:- select * from employee where age is not null;
+ 	    
+ id | first_name | last_name | gender | date_of_birth |              email              |                  age                   |salary  
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------+---------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971 |  200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:26:59.39971 |  300000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:26:59.39971 |  400000
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971 |  500000
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971        | 2500000
+
+
+	b). IS NULL operator which will list down all the records where attribute is NULL.
+	
+	eg:- select * from employee where age is null;
+	
+		 id | first_name | last_name | gender | date_of_birth | email | age | salary 
+		----+------------+-----------+--------+---------------+-------+-----+--------
+		  7 | Ram        | singh     | male   | 2003-12-27    |       |     |  23400
+		  8 | Reeta      | kumari    | female | 1998-05-31    |       |     | 876000
+		
+------------------------------------------------------------------------------------------------------------------------------------------
+
+37. ALIAS :-
+-> rename a table or a column temporarily by giving another name, which is known as ALIAS.
+	
+	a). syntax of table alias :- SELECT column1, column2.... FROM table_name AS alias_name WHERE [condition];
+	
+	    eg:- select e.id,e.first_name,d.dept_name,e.salary from employee as e , department as d where e.id = d.emp_id; 
+	    
+		 id | first_name | dept_name | salary  
+		----+------------+-----------+---------
+		  1 | Sachin     | IT        | 2500000
+		  2 | Ram        | IT        |  200000
+		  3 | Rahul      | HR        |  300000
+		  4 | Reeta      | support   |  400000
+		  5 | Neeraj     | HR        |  500000
+		  7 | Ram        | IT        |   23400
+		  8 | Reeta      | Tech      |  876000
+
+	    
+	b). syntax of column alias :- SELECT column_name AS alias_name FROM table_name WHERE [condition];
+	
+	    eg:- select e.id as Employee_id ,e.first_name as Employee_first_name,d.dept_name as Department_name,e.salary from employee as 		 e , department as d where e.id = d.emp_id; 
+	    
+		 employee_id | employee_first_name | department_name | salary  
+		-------------+---------------------+-----------------+---------
+			   1 | Sachin              | IT              | 2500000
+			   2 | Ram                 | IT              |  200000
+			   3 | Rahul               | HR              |  300000
+			   4 | Reeta               | support         |  400000
+			   5 | Neeraj              | HR              |  500000
+			   7 | Ram                 | IT              |   23400
+			   8 | Reeta               | Tech            |  876000
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+38. TRIGGER :-
+
+-> Triggers are database callback functions, which are automatically performed/invoked when a specified database event occurs.
+-> In contrast, a trigger that is marked FOR EACH STATEMENT only executes once for any given operation, regardless of how many rows it   modifies.
+-> The BEFORE, AFTER or INSTEAD OF keyword determines when the trigger actions will be executed relative to the insertion, modification or removal of the associated row.
+
+	syntax :- syntax of creating a trigger .
+		CREATE  TRIGGER trigger_name [BEFORE|AFTER|INSTEAD OF] event_name
+		ON table_name
+		[
+		 -- Trigger logic goes here....
+		];
+
+	syntax :- syntax of creating a trigger on an UPDATE operation.
+		CREATE  TRIGGER trigger_name [BEFORE|AFTER] UPDATE OF column_name
+		ON table_name
+		[
+		 -- Trigger logic goes here....
+		];
+
+
+EXAMPLE :- 
+	1). first create table company in which we are going to insert our data and using trigger during insertion.
+		CREATE TABLE COMPANY(
+		   ID INT PRIMARY KEY     NOT NULL,
+		   NAME           TEXT    NOT NULL,
+		   AGE            INT     NOT NULL,
+		   ADDRESS        CHAR(50),
+		   SALARY         REAL
+		);
+
+	2). now, create another table audit to store id and time of insertion.
+		CREATE TABLE AUDIT(
+		   EMP_ID INT NOT NULL,
+		   ENTRY_DATE TEXT NOT NULL
+		);
+
+	3). now, create function which you want to apply ,when trigger is activated.
+	
+		CREATE OR REPLACE FUNCTION auditlogfunc() RETURNS TRIGGER AS $example_table$
+		   BEGIN
+		      INSERT INTO AUDIT(EMP_ID, ENTRY_DATE) VALUES (new.ID, current_timestamp);
+		      RETURN NEW;
+		   END;
+		$example_table$ LANGUAGE plpgsql;
+
+
+	4). now, create trigger .
+	
+		CREATE TRIGGER example_trigger AFTER INSERT ON COMPANY
+		FOR EACH ROW EXECUTE PROCEDURE auditlogfunc();
+		
+	5). do insertion .
+		INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+		VALUES (1, 'Paul', 32, 'California', 20000.00 );
+		
+	output:- 
+		select * from company ;
+		 id | name | age |                      address                       | salary 
+		----+------+-----+----------------------------------------------------+--------
+		  1 | Paul |  32 | California                                         |  20000
+	
+	
+		select * from audit ;
+		 emp_id |            entry_date            
+		--------+----------------------------------
+		      1 | 2023-02-06 17:17:07.603434+05:30
+		     
+-> List all triggers :- SELECT * FROM pg_trigger;
+-> DROP trigger :- DROP TRIGGER trigger_name;
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+39. INDEX COMMAND:-
+
+-> Indexes are special lookup tables that the database search engine can use to speed up data retrieval.
+-> An index is a pointer to data in a table.
+-> An index helps to speed up SELECT queries and WHERE clauses.
+-> slows down data input, with UPDATE and INSERT statements.
+-> BY DEFAULT create b-tree indexes.
+-> index type :-
+		B-tree,Hash,Gist,SP-Gist and GIN.
+
+	syntax of CREATE INDEX :- CREATE INDEX index_name on table_name;
+	
+	a). Single-Column Indexes :-
+		-> A single-column index is one that is created based on only one table column.
+		
+		syntax :- CREATE INDEX index_name on table_name (column_name);
+		
+		eg:- CREATE INDEX salary_index on table employee(salary);
+		output:- "salary_index" btree (salary)
+		
+	b). Multicolumn Indexes :- 
+		-> A multicolumn index is defined on more than one column of a table.
+		
+		syntax :- CREATE INDEX index_name on table_name (column1_name, column2_name , .....);
+		
+		eg:- CREATE INDEX genage_index on table employee(gender,age); 
+		
+		output :- "genage_index" btree (gender, age)
+		
+	c). Unique Indexes :- 
+		-> Does not allow any duplicate values to be inserted into the table.
+		
+		syntax :- CREATE UNIQUE INDEX index_name on table_name (column_name);
+		
+	d). Partial indexes :- 
+		-> The index contains entries only for those table rows that satisfy the predicate.
+		
+		syntax :- CREATE INDEX index_name on table_name (conditional_expression);
+		
+	e). Implicit indexes :-
+		-> Implicit indexes are indexes that are automatically created by the database server when an object is created.
+		
+-> LIST down of indexes :- \d table_name.
+-> DROP index command :- DROP INDEX index_name;
+		
+------------------------------------------------------------------------------------------------------------------------------------------
+
+40. TRUNCATE command :- 
+-> TRUNCATE TABLE command is used to delete complete data from an existing table.
+-> DROP TABLE command to delete complete table but it would remove complete table structure from the database.
+
+	syntax :- TRUNCATE TABLE  table_name;
+	     eg:- step1 -  select * from sample;
+				 id | subject | student_id 
+				----+---------+------------
+				  1 | english |          3
+				  2 | science |          2
+				  3 | sst     |          4
+ 
+
+		  step2 - truncate table sample;
+		  
+		  	  select * from sample;
+			 id | subject | student_id 
+			----+---------+------------     structure is still present.
+			
+------------------------------------------------------------------------------------------------------------------------------------------
+
+41. VIEWS :-
+-> Structure data in a way that users or classes of users find natural or intuitive.
+-> Restrict access to the data such that a user can only see limited data instead of complete table.
+-> Summarize data from various tables, which can be used to generate reports.
+
+	syntax :- basic CREATE VIEW syntax
+	       :- CREATE [TEMP | TEMPORARY] VIEW view_name AS SELECT column1, column2..... FROM table_name WHERE [condition];
+	       
+	     eg :- CREATE VIEW emp_view AS select first_name,last_name,age from employee;
+	     
+	     output :- select * from emp_view ;
+			 first_name | last_name |                  age                   
+			------------+-----------+----------------------------------------
+			 Ram        | kumar     | 23 years 3 mons 28 days 15:26:59.39971
+			 Rahul      | Dev       | 32 years 9 mons 12 days 15:26:59.39971
+			 Reeta      | Singh     | 24 years 3 mons 16 days 15:26:59.39971
+			 Neeraj     | Kumar     | 21 years 8 mons 25 days 15:26:59.39971
+			 Sachin     | Kanojia   | 22 years 30 days 15:26:59.39971
+			 Ram        | singh     | 
+			 Reeta      | kumari    | 
+
+-> DROP the view :- DROP VIEW emp_view;
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+42. TRANSACTIONS:-
+-> A transaction is a unit of work that is performed against a database.
+-> A transaction is the propagation of one or more changes to the database. (insert,update,delete)
+
+IMP-------> Properties of Transactions
+-> Transactions have the following four standard properties, usually referred to by the acronym ACID −
+
+	Atomicity   − Ensures that all operations within the work unit are completed successfully; otherwise, the transaction is aborted 			      at the point of failure and previous operations are rolled back to their former state.
+
+	Consistency − Ensures that the database properly changes states upon a successfully committed transaction.
+
+	Isolation   − Enables transactions to operate independently of and transparent to each other.
+
+	Durability  − Ensures that the result or effect of a committed transaction persists in case of a system failure.
+	
+	
+IMP-------> Transaction Control
+-> The following commands are used to control transactions −
+
+	BEGIN TRANSACTION − To start a transaction.
+
+	COMMIT            − To save the changes, alternatively you can use END TRANSACTION command.
+
+	ROLLBACK          − To rollback the changes.
+	
+   syntax :-  
+   
+   	eg :- begin;
+	      DELETE from employee where last_name = 'singh'; 
+	      commit;
+
+	output :- select * from employee;
+	
+ id | first_name | last_name | gender | date_of_birth |              email              |                  age                   |salary  
+----+------------+-----------+--------+---------------+---------------------------------+----------------------------------------+---------
+  2 | Ram        | kumar     | Male   | 1999-10-07    | ram@gmail.com                   | 23 years 3 mons 28 days 15:26:59.39971 |  200000
+  3 | Rahul      | Dev       | male   | 1990-04-22    | rahul@gmail.com                 | 32 years 9 mons 12 days 15:26:59.39971 |  300000
+  4 | Reeta      | Singh     | female | 1998-10-19    | reeta@gmail.com                 | 24 years 3 mons 16 days 15:26:59.39971 |  400000
+  5 | Neeraj     | Kumar     | Male   | 2001-05-10    | neeraj.kumar@berylsystems.com   | 21 years 8 mons 25 days 15:26:59.39971 |  500000
+  1 | Sachin     | Kanojia   | Male   | 2001-01-05    | sachin.kanojia@berylsystems.com | 22 years 30 days 15:26:59.39971        | 2500000
+  8 | Reeta      | kumari    | female | 1998-05-31    |                                 |                                        |  876000
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+43.  LOCKS :-
+-> Locks or Exclusive Locks or Write Locks prevent users from modifying a row or an entire table. 
+-> Rows modified by UPDATE and DELETE are then exclusively locked automatically for the duration of the transaction.   
+-> prevents other users from changing the row until the transaction is either committed or rolled back.
+
+	Syntax for LOCK command:- LOCK [ TABLE ] name IN lock_mode
+	
+	* name − The name (optionally schema-qualified) of an existing table to lock.
+	       − If ONLY is specified before the table name, only that table is locked. If ONLY is not specified, the table and all its 			 descendant tables (if any) are locked.	  
+	       
+	* lock_mode - Default -> ACCESS EXCLUSIVE
+	  -> ACCESS SHARE, ROW SHARE, ROW EXCLUSIVE, SHARE UPDATE EXCLUSIVE, SHARE, SHARE ROW EXCLUSIVE, EXCLUSIVE, ACCESS EXCLUSIVE.     
+	       
+DEAD LOCK      :- Deadlocks can occur when two transactions are waiting for each other to finish their operations.
+Advisory Locks :- Advisory locks can be useful for locking strategies that are an awkward fit for the MVCC model.
+
+NOTE :- MVCC -> database optimization technique that creates duplicate copies of records so that data can be safely read and updated at 			the same time. With MVCC, DBMS reads and writes don't block each other.
+
+
+	eg :- begin; lock table company IN ACCESS EXCLUSIVE MODE; DELETE from company where salary = '20000';
+		-> now table is lock no one can make changes untill commit or rollback command is not executed. and only work with    			   transaction.
+	       
+------------------------------------------------------------------------------------------------------------------------------------------
+
+44. SUBQUERY :-
+-> A subquery or Inner query or Nested query is a query within another PostgreSQL query and embedded within the WHERE clause.
+-> A subquery is used to return data that will be used in the main query as a condition to further restrict the data to be retrieved.
+
+-> rules that subqueries must follow −
+
+	a). Subqueries must be enclosed within parentheses.
+
+	b). A subquery can have only one column in the SELECT clause, unless multiple columns are in the main query for the subquery to 		    compare its selected columns.
+
+	c). An ORDER BY cannot be used in a subquery, although the main query can use an ORDER BY. The GROUP BY can be used to perform 		    the same function as the ORDER BY in a subquery.
+
+	d). Subqueries that return more than one row can only be used with multiple value operators, such as the IN, EXISTS, NOT IN, 		    ANY/SOME, ALL operator.
+
+	e). The BETWEEN operator cannot be used with a subquery; however, the BETWEEN can be used within the subquery.
+	
+	syntax :- SELECT column_name [, column_name ] FROM   table1 [, table2 ] WHERE  column_name OPERATOR (SELECT column_name 
+		[, column_name ] FROM table1 [, table2 ] [WHERE])
+	     
+	     eg:- select id,first_name,salary from employee where salary < (select max(salary) from employee);
+	     
+			 id | first_name | salary 
+			----+------------+--------
+			  2 | Ram        | 200000
+			  3 | Rahul      | 300000
+			  4 | Reeta      | 400000
+			  5 | Neeraj     | 500000
+			  8 | Reeta      | 876000
+  
+------------------------------------------------------------------------------------------------------------------------------------------
+
+45. AUTO INCREMENT :-
+-> PostgreSQL has the data types smallserial, serial and bigserial; these are not true types.
+
+	syntax :- 
+		The basic usage of SERIAL dataype is as follows −
+
+		CREATE TABLE tablename (
+		   colname SERIAL
+		);
+
+	eg :- CREATE TABLE employee(
+		id BIGSERIAL );
+
+------------------------------------------------------------------------------------------------------------------------------------------	       
+
+46. PRIVILEGES :-
+-> An object is created in a database, an owner is assigned to it. 
+-> The owner is usually the one who executed the creation statement. 
+-> For most kinds of objects, the initial state is that only the owner (or a superuser) can modify or delete the object.
+
+-> kinds of privileges in PostgreSQL are −
+
+	SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER,CREATE,CONNECT,TEMPORARY,EXECUTE, and USAGE.
+	
+	Syntax for GRANT :::::::--------
+		Basic syntax for GRANT command is as follows −
+
+		GRANT privilege [, ...]
+		ON object [, ...]
+		TO { PUBLIC | GROUP group | username }
+		
+		
+		privilege   − values could be: SELECT, INSERT, UPDATE, DELETE, RULE, ALL.
+
+		object      − The name of an object to which to grant access. The possible objects are: table, view, sequence
+
+		PUBLIC      − A short form representing all users.
+
+		GROUP group − A group to whom to grant privileges.
+
+		username    − The name of a user to whom to grant privileges. PUBLIC is a short form representing all users.
+			       
+	eg :- GRANT ALL ON employee TO sach;
+	   
+	   
+	   syntax for revoke :- REVOKE ALL ON employee TO sach;
+	   
+------------------------------------------------------------------------------------------------------------------------------------------
+
+47. DATE/TIME Functions and Operators
+
+	Operator			Example				     	Result
+	+		date '2001-09-28' + integer '7'				ate '2001-10-05'
+	+		date '2001-09-28' + interval '1 hour'				timestamp '2001-09-28 01:00:00'
+	+		date '2001-09-28' + time '03:00'				timestamp '2001-09-28 03:00:00'
+	+		interval '1 day' + interval '1 hour'				interval '1 day 01:00:00'
+	+		timestamp '2001-09-28 01:00' + interval '23 hours'		timestamp '2001-09-29 00:00:00'
+	+		time '01:00' + interval '3 hours'				time '04:00:00'
+	-		- interval '23 hours'						interval '-23:00:00'
+	-		date '2001-10-01' - date '2001-09-28'				integer '3' (days)
+	-		date '2001-10-01' - integer '7'				date '2001-09-24'
+	-		date '2001-09-28' - interval '1 hour'				timestamp '2001-09-27 23:00:00'
+	-		time '05:00' - time '03:00'					interval '02:00:00'
+	-		time '05:00' - interval '2 hours'				time '03:00:00'
+	-		timestamp '2001-09-28 23:00' - interval '23 hours'		timestamp '2001-09-28 00:00:00'
+	-		interval '1 day' - interval '1 hour'				interval '1 day -01:00:00'
+	-	timestamp '2001-09-29 03:00' - timestamp '2001-09-27 12:00'		interval '1 day 15:00:00'
+	*		900 * interval '1 second'					interval '00:15:00'
+	*		21 * interval '1 day'						interval '21 days'
+	*		double precision '3.5' * interval '1 hour'			interval '03:30:00'
+	/		interval '1 hour' / double precision '1.5'			interval '00:40:00'
+	
+	
+-> date and time function.
+	S. No.	        Function & Description
+	1		AGE()
+			Subtract arguments
+
+	2		CURRENT DATE/TIME()
+			Current date and time
+
+	3		DATE_PART()
+			Get subfield (equivalent to extract)
+
+	4		EXTRACT()
+			Get subfield
+
+	5		ISFINITE()
+			Test for finite date, time and interval (not +/-infinity)
+
+	6		JUSTIFY
+			Adjust interval
+			
+	eg1:- SELECT CURRENT_TIME;
+		     current_time      
+		-----------------------
+		 15:01:25.548336+05:30
+
+	eg2:- SELECT CURRENT_TIME;
+		     current_time      
+		-----------------------
+		 15:01:25.548336+05:30
+
+	eg3:- SELECT CURRENT_TIME;
+		     current_time      
+		-----------------------
+		 15:01:25.548336+05:30
+
+	eg4:- SELECT LOCALTIMESTAMP ;
+	
+		       localtimestamp       
+		----------------------------
+		 2023-02-07 15:03:06.605063
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+48. Function :-
+
+
+	syntax:- CREATE [OR REPLACE] FUNCTION function_name (arguments) 
+		RETURNS return_datatype AS $variable_name$
+		   DECLARE
+		      declaration;
+		      [...]
+		   BEGIN
+		      < function_body >
+		      [...]
+		      RETURN { variable_name | value }
+		   END; LANGUAGE plpgsql;
+	       
+	 eg:- CREATE OR REPLACE FUNCTION totalRecords ()
+		RETURNS integer AS $total$
+		declare
+ 			total integer;
+		BEGIN
+   			SELECT count(*) into total FROM employee;
+   			RETURN total;
+		END;
+		$total$ LANGUAGE plpgsql;
+		 
+		output:- CREATE FUNCTION
+		
+		
+		NOTE :- to call the function -> select totalRecord();
+			output :- totalrecords
+				--------------
+				      6
+------------------------------------------------------------------------------------------------------------------------------------------
+
+49. Useful Functions:-
+-> Function types :- count(),max(),min(),avg(),sum()
+
+ 	a). select sum(salary) from employee;
+		   sum   
+		---------
+		 4776000
+
+
+	b). select avg(salary) from employee;
+		 avg         
+	---------------------
+	 796000.000000000000
+	
+
+	c). select count(salary) from employee;
+		 count 
+		-------
+		     6
+
+	d). select max(salary) from employee;
+		   max   
+		---------
+		 2500000
+		(1 row)
+
+	e). select min(salary) from employee;
+		  min   
+		--------
+		 200000
+		(1 row)
+
+
+PostgreSQL ARRAY Functions   − The PostgreSQL ARRAY aggregate function puts input values, including nulls, concatenated into an array.
+
+		                 Table "public.company"
+			   Column   |     Type      | Collation | Nullable | Default 
+			------------+---------------+-----------+----------+---------
+			 id         | integer       |           | not null | 
+			 name       | text          |           | not null | 
+			 age        | integer       |           | not null | 
+			 address    | character(50) |           |          | 
+			 salary     | real          |           |          | 
+			 test_score | integer[]     |           |          | 
+			 email      | text[]        |           |          | 
+
+Syntax to add table with array :-
+	IMP ->	CREATE TABLE employee(student_id bigserial,email text[][],test_score[] );
+	
+	    ->  INSERT INTO company (name,age,address,salary,test_score,email)
+		values('shiv',25,'badarpur',120000,'{94,23,88,45}','{{"work","work@gmail.com"},{"other","other1@gmail.com"}}');
+	
+	a). select email[1][1] as type,test_score[1] from company;
+		 type | test_score 
+		------+------------
+		 work |         94
+
+	b). select email[1][1] as address,test_score[1] from company;
+		 address | test_score 
+		---------+------------
+		 work    |         94
+		 
+	c). select email[1][1] as type,email[1][2] as address,test_score[1] from company where email[1][1] = 'work';
+	
+		 type |    address     | test_score 
+		------+----------------+------------
+		 work | work@gmail.com |         94
+		
+
+
+
+
+PostgreSQL Numeric Functions − Complete list of PostgreSQL functions required to manipulate numbers in SQL.
+
+PostgreSQL String Functions  − Complete list of PostgreSQL functions required to manipulate strings in PostgreSQL.
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+		   
+	       
+	     						DATABASE DESIGN (website - dbdiagram.io)
+	       
+a). Create table in design :-
+
+	Table posts {
+	    id integer [primary key]
+	    title varchar
+	    body text [note: 'Content of the post']
+	    user_id integer
+	    created_at timestamp
+	    }
+
+b). Column setting :- 
+	Table buildings {
+	    ...
+	    address varchar(255) [unique, not null, note: 'to include unit number']
+	    id integer [ pk, unique, default: 123, note: 'Number' ]
+	    }
+	    
+	    
+	The list of column settings you can use:
+
+	note: 'string to add notes': add a metadata note to this column
+	primary key or pk          : mark a column as primary key. For composite primary key, refer to the 'Indexes' section
+	null or not null           : mark a column null or not null
+	unique                     : mark the column unique
+	default: some_value        : set a default value of the column, please refer to the 'Default Value' section below
+	increment                  : mark the column as auto-increment
+
+c). Relationships & Foreign Key Definitions :-
+	
+	1. Table posts {
+		    id integer [primary key]
+		    user_id integer [ref: > users.id] // many-to-one
+		}       
+		
+	2. ref : student.stu_id < issues.isu_id
+	
+	
+-> There are 4 types of relationships: one-to-one, one-to-many, many-to-one and many-to-many
+
+	<: one-to-many. E.g: users.id < posts.user_id
+	>: many-to-one. E.g: posts.user_id > users.id
+	-: one-to-one. E.g: users.id - user_infos.user_id
+	<>: many-to-many. E.g: authors.id <> books.id
+	       
+	       
+d). Syntax Consistency
+	DBML is the standard language for database and the syntax is consistent to provide clear and extensive functions.
+
+	curly brackets  			{}: grouping for indexes, constraints and table definitions
+	square brackets 			[]: settings
+	forward slashes 			//: comments
+	column_name is stated in just plain text
+	single quote as 'string' 	  	  : string value
+	double quote as "column name"   	  : quoting variable
+	triple quote as '''multi-line string'''  : multi-line string value
+	backtick `				  : function expression
+	       
+-----------------------------------------------------------------------------------------------------------------------------------------
+	       
+								NOTE
+								
+1). For random values between range :- 
+			syntax :- UPDATE orders SET menu_id = floor(random() * (h-l+1) + l)::int;					
+				   UPDATE orders SET menu_id = floor(random() * (20-1+1) + 1)::int;
+	       
+	       
+2). for case :-
+	example :-
+	 
+	a).
+	 SELECT title,
+	       length,
+	       CASE
+		   WHEN length> 0
+		        AND length <= 50 THEN 'Short'
+		   WHEN length > 50
+		        AND length <= 120 THEN 'Medium'
+		   WHEN length> 120 THEN 'Long'
+	       END duration                              #here duration is a column name
+	FROM film
+	ORDER BY title;
+	       
+	       
+	b). With aggregate function :-
+		 -> SELECT
+			SUM (CASE
+			       WHEN rental_rate = 0.99 THEN 1
+			       ELSE 0
+			      END
+			) AS "Economy",          #After as is a column name.
+			SUM (
+				CASE
+				WHEN rental_rate = 2.99 THEN 1
+				ELSE 0
+				END
+			) AS "Mass",
+			SUM (
+				CASE
+				WHEN rental_rate = 4.99 THEN 1
+				ELSE 0
+				END
+			) AS "Premium"
+			FROM
+			film;
+	       
+

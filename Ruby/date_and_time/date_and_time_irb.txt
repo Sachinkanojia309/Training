@@ -1,0 +1,337 @@
+------------------------------------------------------------ date and time irb -----------------------------------------------------------
+
+ 1). Methods for Creating :-
+ 
+	a). ::new: Returns a new time from specified arguments (year, month, etc.), including an optional timezone value.
+	
+		eg:-
+		3.2.1 :038 > Time.new(2023,05,21,11,45,46, "+07:30")
+		 => 2023-05-21 11:45:46 +0730 
+		
+	b). ::local (aliased as ::mktime): Same as ::new, except the timezone is the local timezone.
+	
+		eg:-
+		3.2.1 :039 > Time.local(2023,05,21,11,45,46)
+		 => 2023-05-21 11:45:46 +0530 
+		
+	c). ::utc (aliased as ::gm): Same as ::new, except the timezone is UTC.
+	
+		eg:-
+		3.2.1 :040 > Time.utc(2023,05,21,11,45,46)
+		 => 2023-05-21 11:45:46 UTC 
+		
+	d). ::at: Returns a new time based on seconds since epoch.
+	
+		eg:-
+		3.2.1 :041 > Time.at(2347846313)
+		 => 2044-05-26 09:01:53 +0530 
+		
+	e). ::now: Returns a new time based on the current system time.
+	
+		eg:-
+		3.2.1 :042 > Time.now
+		 => 2023-03-06 14:55:42.951494274 +0530 
+		
+	f). + (plus): Returns a new time increased by the given number of seconds.
+	
+		eg:-
+		3.2.1 :043 > t = Time.now
+		 => 2023-03-06 14:56:00.018289599 +0530 
+		3.2.1 :044 > t+10
+		 => 2023-03-06 14:56:10.018289599 +0530 
+		
+	g). - (minus): Returns a new time decreased by the given number of seconds.
+	
+		eg:-
+		3.2.1 :045 > t-20
+		 => 2023-03-06 14:55:40.018289599 +0530 
+		 
+ 2). Methods for Fetching :-
+
+	a). usec (aliased as tv_usec): Returns the number of microseconds in the subseconds value of the time.
+		
+		eg:-
+		3.2.1 :046 > t
+		 => 2023-03-06 14:56:00.018289599 +0530 
+		3.2.1 :047 > t.usec
+		 => 18289 
+		
+	b). nsec (aliased as tv_nsec): Returns the number of nanoseconds in the subsecond part of the time.
+	
+		eg:-
+		3.2.1 :048 > t.nsec
+		 => 18289599 
+
+	c). subsec: Returns the subseconds value for the time.
+	
+		eg:-
+		3.2.1 :049 > t.subsec
+		 => (18289599/1000000000) 
+		
+	d). wday: Returns the integer weekday value of the time (0 == Sunday).
+	
+		eg:-
+		3.2.1 :050 > t.wday
+		 => 1 
+		
+	e). yday: Returns the integer yearday value of the time (1 == January 1).
+	
+		eg:-
+		3.2.1 :051 > t.yday
+		 => 65 
+		
+	f). hash: Returns the integer hash value for the time.
+	
+		eg:-
+		3.2.1 :052 > t.hash
+		 => 1279555496784931508 
+		
+	g). utc_offset (aliased as gmt_offset and gmtoff): Returns the offset in seconds between time and UTC.
+	
+		eg:-
+		3.2.1 :053 > t.utc_offset
+		 => 19800 
+		
+	h). to_f: Returns the float number of seconds since epoch for the time.
+	
+		eg:-
+		3.2.1 :054 > t.to_f
+		 => 1678094760.0182896 
+		
+	i). to_i (aliased as tv_sec): Returns the integer number of seconds since epoch for the time.
+	
+		eg:-
+		3.2.1 :055 > t.to_i
+		 => 1678094760 
+
+	j). to_r: Returns the Rational number of seconds since epoch for the time.
+	
+		eg:-
+		3.2.1 :056 > t.to_r
+		 => (1678094760018289599/1000000000) 
+		
+	k). zone: Returns a string representation of the timezone of the time.
+	
+		eg:-
+		3.2.1 :057 > t.zone
+		 => "IST" 
+
+ 3). Methods for Querying:-
+ 
+	a). utc? (aliased as gmt?): Returns whether the time is UTC.
+	
+		eg:-
+		3.2.1 :065 > t.utc?
+		 => false 
+
+	b). dst? (aliased as isdst): Returns whether the time is DST (daylight saving time).
+	
+		eg:-
+		3.2.1 :066 > t.dst?
+		 => false 
+
+	c). sunday?: Returns whether the time is a Sunday.
+	
+		eg:-
+		3.2.1 :067 > t.sunday?
+		 => false 
+
+	NOTE :- monday?,tuesday?,wednesday?,thursday?,friday? ,saturday? are similar to sunday?
+	
+ 4). Methods for Comparing:-
+ 
+	a). <=>: Compares self to another time.
+	
+		eg:-
+		3.2.1 :068 > t1
+		 => 2010-01-01 00:00:00 +0530 
+		3.2.1 :069 > t2
+		 => 2011-01-01 00:00:00 +0530 
+		3.2.1 :070 > t1 <=> t2 
+		 => -1 
+		
+	b). eql?: Returns whether the time is equal to another time.
+	
+		eg:-
+		3.2.1 :071 > t1.eql?(t2)
+		 => false 
+
+ 5). Methods for Rounding:-
+ 
+	a). round:Returns a new time with subseconds rounded.
+	
+		eg:-
+		3.2.1 :072 > t = Time.now
+		 => 2023-03-06 15:55:16.655981428 +0530 
+		3.2.1 :073 > t.round(0)
+		 => 2023-03-06 15:55:17 +0530 
+		3.2.1 :074 > t.round(1)
+		 => 2023-03-06 15:55:16.7 +0530 
+
+	b). ceil: Returns a new time with subseconds raised to a ceiling.
+	
+		eg:-
+		3.2.1 :075 > t.floor(0)
+		 => 2023-03-06 15:55:16 +0530 
+		3.2.1 :076 > t.floor(1)
+		 => 2023-03-06 15:55:16.6 +0530 
+		
+	c). floor: Returns a new time with subseconds lowered to a floor.
+	
+		eg:-
+		3.2.1 :077 > t.ceil(0)
+		 => 2023-03-06 15:55:17 +0530 
+		3.2.1 :078 > t.ceil(1)
+		 => 2023-03-06 15:55:16.7 +0530 
+		 
+	NOTE :- 0 and 1 specify the number of digit after decimal.
+	
+		eg:-
+		3.2.1 :080 > t.ceil(5)                #5 show 5 digit after the decimal.
+ 		=> 2023-03-06 15:55:16.65599 +0530 
+ 		
+ 6). Methods for Converting:-
+ 
+	a). asctime (aliased as ctime): Returns the time as a string.
+	
+		eg:-
+		3.2.1 :082 > t = Time.now
+		 => 2023-03-06 16:10:16.439091863 +0530 
+		3.2.1 :083 > t.asctime
+		 => "Mon Mar  6 16:10:16 2023" 
+
+	b). inspect: Returns the time in detail as a string.
+	
+		eg:-
+		3.2.1 :084 > t.inspect
+		 => "2023-03-06 16:10:16.439091863 +0530"  
+
+	c). strftime: Returns the time as a string, according to a given format.
+	
+		eg:-
+		3.2.1 :085 > t.strftime("%Y-%m-%d %H:%M:%S")
+		 => "2023-03-06 16:10:16" 
+		 
+		3.2.1 :098 > t.strftime('%a %b %e %T %Y')
+		 => "Mon Mar  6 16:10:16 2023" 
+		3.2.1 :097 > t.strftime("%c")
+		 => "Mon Mar  6 16:10:16 2023" 
+
+		
+	d). to_a: Returns a 10-element array of values from the time.
+	
+		eg:-
+		3.2.1 :086 > t.to_a
+		 => [16, 10, 16, 6, 3, 2023, 1, 65, false, "IST"] 
+		
+	e). to_s: Returns a string representation of the time.
+	
+		eg:-
+		3.2.1 :087 > t.to_s
+		 => "2023-03-06 16:10:16 +0530" 
+
+	f). getutc (aliased as getgm): Returns a new time converted to UTC.
+	
+		eg:-
+		3.2.1 :088 > t.getutc
+		 => 2023-03-06 10:40:16.439091863 UTC 
+		
+	g). getlocal: Returns a new time converted to local time.
+	
+		eg:-
+		3.2.1 :089 > t.getlocal
+		 => 2023-03-06 16:10:16.439091863 +0530 
+
+	h). utc (aliased as gmtime): Converts time to UTC in place.
+	
+		eg:-
+		3.2.1 :090 > t.utc
+		 => 2023-03-06 10:40:16.439091863 UTC 
+		
+	i). localtime: Converts time to local time in place.
+	
+		eg:-
+		3.2.1 :091 > t.localtime
+		 => 2023-03-06 16:10:16.439091863 +0530
+
+	j). deconstruct_keys: Returns a hash of time components used in pattern-matching.
+	
+		eg:-
+		3.2.1 :095 > t.deconstruct_keys([:year , :month , :day])
+		 => {:year=>2023, :month=>3, :day=>6} 
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+								date
+								
+ 1). Argument limit:-
+
+ -> Certain singleton methods in Date that parse string arguments also take optional keyword argument limit, 
+ -> which can limit the length of the string argument.
+ 
+ 2). gregorian_leap?(year):-
+ 
+ -> Returns true if the given year is a leap year in the proleptic Gregorian calendar, false otherwise
+ 	eg:-
+ 	3.2.1 :126 > Date.gregorian_leap?(2000)
+	 => true 
+	3.2.1 :127 > Date.gregorian_leap?(2002)
+	 => false 
+	3.2.1 :128 > Date.gregorian_leap?(2004)
+	 => true 
+	 
+	 or 
+	 
+	 we can use leap?
+		 eg:-
+		 Date.new(2000).leap?
+	 
+ 3). Date , month and year movement :-
+ 
+ 	a). next_day(n = 1) → new_date
+	    Equivalent to Date#+ with argument n.
+	    
+	    eg:-
+	    	3.2.1 :131 > date = Date.today
+		 => #<Date: 2023-03-06 ((2460010j,0s,0n),+0s,2299161j)> 
+		3.2.1 :132 > date.next_day(n=1)
+		 => #<Date: 2023-03-07 ((2460011j,0s,0n),+0s,2299161j)> 
+		
+	b). next_month(n = 1) → new_date
+	    Equivalent to >> with argument n.
+	    
+	    	eg:-
+	    	3.2.1 :133 > date.next_month(n=1)
+		 => #<Date: 2023-04-06 ((2460041j,0s,0n),+0s,2299161j)> 
+		3.2.1 :134 > date.next_month(n=4)
+		 => #<Date: 2023-07-06 ((2460132j,0s,0n),+0s,2299161j)> 
+		
+	c). next_year(n = 1) → new_date
+	    Equivalent to >> with argument n * 12.
+	    
+	    	eg:-
+	    	3.2.1 :135 > date.next_year(n=13)
+		 => #<Date: 2036-03-06 ((2464759j,0s,0n),+0s,2299161j)> 
+		
+	d). prev_day(n = 1) → new_date
+	    Equivalent to Date#- with argument n.
+	    
+	    	eg:-
+	    	3.2.1 :136 > date.prev_day(n=5)
+		 => #<Date: 2023-03-01 ((2460005j,0s,0n),+0s,2299161j)> 
+		
+	e). prev_month(n = 1) → new_date
+	    Equivalent to << with argument n.
+	    
+	    	eg:-
+	    	3.2.1 :137 > date.prev_month(n=5)
+		 => #<Date: 2022-10-06 ((2459859j,0s,0n),+0s,2299161j)> 
+		
+	f). prev_year(n = 1) → new_date
+	    Equivalent to << with argument n * 12.
+	    
+	    	eg:-
+	    	3.2.1 :138 > date.prev_year(n=5)
+		 => #<Date: 2018-03-06 ((2458184j,0s,0n),+0s,2299161j)> 
+
+

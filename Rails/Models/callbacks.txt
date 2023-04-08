@@ -1,0 +1,431 @@
+------------------------------------------------------------- callbacks --------------------------------------------------------------
+
+-> Callbacks are methods that get called at certain moments of an object's life cycle. 
+-> With callbacks it is possible to write code that will run whenever an Active Record object is created, saved, updated, deleted, validated, or loaded from the database.
+
+ 1). Callback Registration :-
+	-> In order to use the available callbacks, you need to register them. You can implement the callbacks as ordinary methods and 
+	-> use a macro-style class method to register them as callbacks
+	
+	:-        def normalize_name     #use for callback
+		    self.name = name.downcase.titleize
+		  end
+		  
+		  before_validation :normalize_name  #calling normalize_name method for name for validating the name.
+		  
+	:- The macro-style class methods can also receive a block. Consider using this style 
+	   if the code inside your block is so short that it fits in a single line.
+	   
+		   before_validation do
+		     self.name = name.downcase.titleize
+		   end
+
+ 2). Available Callbacks :-
+-> Here is a list with all the available Active Record callbacks, 
+-> listed in the same order in which they will get called during the respective operations.
+
+   a). Creating an Object
+   
+	*). before_validation :-
+		def normalize_name     #use for callback
+		  self.name = name.downcase.titleize
+		end
+
+		before_validation :normalize_name
+
+	*). after_validation :-
+		def print_message
+		  puts "validation checked"
+		end
+
+		after_validation :print_message
+		
+	*). before_save :-  it work on both create and update
+	
+		def length_check
+		  if self.mobile.split('').length != 10
+		    self.mobile = "1234567890"
+		  end
+		end
+
+		before_save :length_check
+
+	*). around_save :-
+		
+		def around_save_check
+		  puts "# perform actions before save"
+		  yield # save the object
+		  puts "# perform actions after save"
+		end
+
+		around_save :around_save_check
+	
+	*). before_create :-
+	
+		  def before_create_check
+		    self.before_save = "before_create"
+		    puts "==========================before create is created============================= "
+		  end
+
+		  before_create :before_create_check
+
+	*). around_create :-
+	
+		  def around_create_check
+		    self.before_save = "around_create"
+		    puts "========================use around create before create happen====================="
+		    yield
+		    puts "========================use around create after create happen====================="
+		    self.after_save = "around_create"
+		  end
+
+		  around_create :around_create_check
+		  
+	*). after_create :-
+	
+		  def after_create_check
+		    puts "========================after create is created================================="
+		  end
+
+		  after_create :after_create_check
+		  
+	*). after_save :-
+	
+		  def after_save_check
+		    puts "================================after save check================================"
+		  end
+
+		  after_save :after_save_check
+
+	*). after_commit :-
+
+		  def after_commit_check
+		    puts "================================after commit check================================"
+		  end
+
+  		  after_commit :after_commit_check
+  		  
+   b). Updating an Object
+  
+	*). before_validation
+	*). after_validation
+	*). before_save
+	*). around_save
+	*). before_update
+	
+		  def before_update_check
+		    self.before_save = "before update"
+		    puts "=================print before update================================"
+		  end
+
+		  before_update :before_update_check
+
+  
+	*). after_update
+	
+		  #after update
+		  def after_update_check
+		    self.after_save = "after update"
+		    puts "=====================print after update================================"
+		  end
+		  
+		  after_update :after_update_check
+		  
+	*). after_save
+	*). after_commit 
+	
+  c). Destroying an Object
+ 
+	*). before_destroy
+	
+		  before_destroy :can_destroy?
+
+		  def can_destroy?
+		    if self.form_id > 1003 
+		      self.errors.add(:base, "Can't be destroy because form id greater than 1003")
+		      throw :abort
+		    end
+		  end
+		  
+	    calling :- 
+		  3.2.1 :046 > f3 = form.find_by(id: 18)
+			  FormDetail Load (0.5ms)  SELECT "form_details".* FROM "form_details" WHERE "form_details"."id" = $1 LIMIT $2  
+			  [["id", 18], ["LIMIT", 1]]
+			  =>                                                          
+			  #<FormDetail:0x00007f2a14b5c1c0    
+		  
+		  3.2.1 :048 > f3.destroy!
+			  TRANSACTION (0.2ms)  BEGIN
+			  FormDetail Destroy (0.4ms)  DELETE FROM "form_details" WHERE "form_details"."id" = $1  [["id", 18]]
+			  TRANSACTION (1.3ms)  COMMIT                             
+
+		     
+	*). around_destroy
+	
+		  around_destroy :comment_around
+
+		  def comment_around
+		    puts "comment for around destroy before"
+		    yield
+		    puts "comment for around destroy after"
+		  end
+		  
+	*). after_destroy
+	
+		  after_destroy :comment
+
+		  def comment
+		    puts "after destroy successful"
+		  end
+		  
+  d). after_initialize and after_find :-
+	-> The after_initialize callback will be called whenever an Active Record object is instantiated, 
+	   either by directly using new or when a record is loaded from the database.
+	   
+	   	:- 	  after_initialize do |form_detail|
+			    puts "==================You have initialized an object!======================"
+			  end
+			  
+			  calling :- FormDetail.new
+
+	-> The after_find callback will be called whenever Active Record loads a record from the database. 
+	   after_find is called before after_initialize if both are defined.
+	   
+	   	:-       after_find do |form_detail|
+			    puts "==================You have found an object!============================"
+			  end
+	   
+			  calling :- FormDetail.first
+			  
+  e). after_touch :-
+	-> The after_touch callback will be called whenever an Active Record object is touched.
+	
+	:- f3 = FormDetail.find(15)
+	
+	calling:-
+	
+	3.2.1 :032 > f3.touch
+	  TRANSACTION (0.3ms)  BEGIN
+	  FormDetail Update (0.4ms)  UPDATE "form_details" SET "updated_at" = $1 WHERE "form_details"."id" = $2  [["updated_at", "2023-03-29 05:22:38.571222"], ["id", 15]]                                     
+	================You have touched an object======================
+	  TRANSACTION (1.7ms)  COMMIT                             
+	================================after commit check================================
+	 => true                                                  
+	
+-----------------------------------------------------------------------------------------------------------------------------------
+							Running Callbacks
+							
+-> The following methods trigger callbacks:
+
+	*). create   :- This would trigger the after_create and after_save callbacks.
+	*). create!  :- This method is similar to create, but it raises an exception if the record is invalid.
+	*). destroy  :- This method triggers the before_destroy and after_destroy callbacks when a record is deleted.
+	*). destroy! :- This method is similar to destroy, but it raises an exception if the record cannot be deleted.
+	
+	*). destroy_all :- This method deletes all records that match the given conditions. 
+			    It triggers the same callbacks as destroy for each record that is deleted.
+			    
+	*). destroy_by  :- This method deletes the first record that matches the given conditions. 
+			   It triggers the same callbacks as destroy for the record that is deleted.
+			   
+	*). save	:- This method triggers the before_save and after_save callbacks when a record is saved.
+	*). save!	:- This method is similar to save, but it raises an exception if the record is invalid.
+	*). save(validate: false) :- This method skips the validation step when saving a record.
+	*). toggle!	:- This method updates a boolean attribute and triggers the before_save and after_save callbacks.
+	*). touch	:- This method updates the updated_at timestamp for a record and triggers the before_save and after_save callbacks.
+	*). update_attribute :- This method updates a single attribute for a record and triggers the before_save and after_save callbacks.
+	*). update	:- This method updates a record and triggers the before_save and after_save callbacks. 
+	*). update!	:- This method is similar to update, but it raises an exception if the record is invalid.
+	*). valid?	:- This method is used to check ,if object is valid or not.
+	
+  :--- Additionally, the after_find callback is triggered by the following finder methods:
+	all,first,find,find_by,find_by_*,find_by_*!,find_by_sql,last
+	
+ NOTE :- The after_initialize callback is triggered every time a new object of the class is initialized.
+ 
+-----------------------------------------------------------------------------------------------------------------------------------
+							Skipping Callbacks
+							
+-> Just as with validations, it is also possible to skip callbacks by using the following methods:
+
+	*). decrement! -> This method decrements a numeric attribute and skips all callbacks.
+		
+			eg :- 3.2.1 :041 > f1.decrement!(:form_id)
+			
+	  		      FormDetail Update All (2.0ms)  UPDATE "form_details" SET "form_id" = COALESCE("form_id", 0) - $1 
+	  		      WHERE "form_details"."id" = $2  [["form_id", 1], ["id", 32]]        
+	
+	*). decrement_counter  -> This method decrements a counter cache column and skips all callbacks.
+	
+	*). delete -> This method deletes a record and skips the before_destroy and after_destroy callbacks.
+	
+			eg :- 3.2.1 :045 > f1.delete
+			
+	  		      FormDetail Destroy (2.0ms)  DELETE FROM "form_details" WHERE "form_details"."id" = $1  [["id", 1]]
+
+	*). delete_all	-> This method deletes all records that match the given conditions and skips the before_destroy 
+			   and after_destroy callbacks. 
+				   
+			eg :- 3.2.1 :046 > FormDetail.where(relocate: nil).delete_all
+			
+	  		      FormDetail Delete All (1.7ms)  DELETE FROM "form_details" WHERE "form_details"."relocate" IS NULL
+	 		      => 9       	   
+				   
+	*). delete_by -> This method deletes the first record that matches the given conditions and
+			  skips the before_destroy and after_destroy callbacks
+				   
+			eg :- 3.2.1 :048 > FormDetail.where(relocate: "yes").delete_by(payment_type: "net_banking")
+			
+	  		      FormDetail Delete All (2.3ms)  DELETE FROM "form_details" WHERE "form_details"."relocate" = $1 AND 			      "form_details"."payment_type" = $2  [["relocate", "yes"], ["payment_type", "net_banking"]]
+			      => 4 
+				   
+	*). increment! -> This method increments a numeric attribute and skips all callbacks.
+	
+			eg :- 3.2.1 :050 > f1.increment!(:form_id)
+			
+ 			      FormDetail Update All (1.6ms)  UPDATE "form_details" SET "form_id" = COALESCE("form_id", 0) + $1 WHERE 				      "form_details"."id" = $2  [["form_id", 1], ["id", 31]]    
+			
+	*). increment_counter -> This method increments a counter cache column and skips all callbacks.
+	
+	*). insert -> This method inserts a new record and skips all callbacks.
+	
+			eg :- 3.2.1 :065 > FormDetail.insert({name: "vipul", salary: 23456, address: "punjab"}) 
+			
+ 			      FormDetail Insert (2.3ms)  INSERT INTO
+ 			      "form_details" ("name","salary","address","created_at","updated_at")VALUES ('vipul', 23456, 'punjab',
+ 			      CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON CONFLICT  DO NOTHING RETURNING "id"
+ 			      => #<ActiveRecord::Result:0x00007f65a98e5ab0 @column_types={}, @columns=["id"], @hash_rows=nil,
+ 			       @rows=[[34]]> 
+
+	*). insert! -> This method is similar to insert, but it raises an exception if the record is invalid.
+	
+	*). insert_all	-> This method inserts multiple record and skips all callbacks.
+	
+			eg :- 3.2.1 :067 > FormDetail.insert_all!([{name: "prabha", salary: 123456, address: "gujrat", gender: "female"}
+			      ,{name: "dev", salary: 108515, address: "delhi", gender: "male"}]) 
+			
+			FormDetail Bulk Insert (1.7ms)  INSERT INTO
+			"form_details" ("name","salary","address","gender","created_at","updated_at") VALUES ('prabha', 123456, 'gujrat'
+			, 'female', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('dev', 108515, 'delhi', 'male', CURRENT_TIMESTAMP,
+			 CURRENT_TIMESTAMP) RETURNING 			"id"                                                                                                                                    
+			=> #<ActiveRecord::Result:0x00007f65aa005bb0 @column_types={}, @columns=["id"], @hash_rows=nil, @rows=[[35], [36]]>  
+			
+	*). insert_all! -> This method is similar to insert_all, but it raises an exception if the record is invalid.
+		
+	*). touch_all -> This method updates the updated_at timestamp for multiple records and skips all callbacks.
+	
+			eg :- 3.2.1 :088 > FormDetail.where(salary: 15000).touch_all
+			
+  			FormDetail Update All (3.6ms)  UPDATE "form_details" SET "updated_at" = $1 WHERE "form_details"."salary" = $2 
+  			[["updated_at", "2023-03-29 08:43:39.396978"], ["salary", 15000]]
+  			=> 1 
+
+	*). update_column -> This method updates a single attribute for a record and skips the `before_save and after_save callbacks.
+	
+			eg :- 3.2.1 :100 > f4.update_column(:age, 25)
+			
+  			    FormDetail Update (1.9ms)  UPDATE "form_details" SET "age" = $1 WHERE "form_details"."id" = $2  [["age", 25]
+  			    , ["id", 22]]
+  			    => true 
+       
+	*). update_columns -> This method updates multiple attribute for a record and skips the `before_save and after_save callbacks.
+	*). update_all	   -> This method updates multiple records and skips all callbacks.
+	
+			eg :- 3.2.1 :101 > FormDetail.where(terms_and_conditions: nil).update_all(terms_and_conditions: "1")
+			
+  			    FormDetail Update All (2.0ms)  UPDATE "form_details" SET "terms_and_conditions" = $1 WHERE
+  			    "form_details"."terms_and_conditions" IS NULL [["terms_and_conditions" , "1"]]
+  			    => 3 rm_pass
+  			      
+	*). update_counters -> This method updates a counter cache column for multiple records and skips all callbacks. 
+	*). upsert	    -> This method inserts a new record or updates an existing record and skips all callbacks.
+	
+			eg :- 3.2.1 :111 > FormDetail.upsert({name: "vishal", email: "vishal@gmail.com"})
+			
+  			   FormDetail Upsert (1.9ms)  INSERT INTO "form_details" ("name","email","created_at","updated_at") 
+  			   VALUES ('vishal', 'vishal@gmail.com', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) ON CONFLICT ("id") DO UPDATE 
+  			   SET updated_at=(CASE WHEN ("form_details"."name" IS NOT DISTINCT FROM excluded."name" 
+  			   AND "form_details"."email" IS NOT DISTINCT FROM excluded."email") THEN "form_details".
+  			   updated_at ELSE CURRENT_TIMESTAMP END),"name"=excluded."name","email"=excluded."email" RETURNING "id" 
+  			                            
+ 			=> #<ActiveRecord::Result:0x00007f65a9b787a0 @column_types={}, @columns=["id"], @hash_rows=nil, @rows=[[37]]> 
+
+
+	*). upsert_all	    -> This method inserts multiple records or updates existing records and skips all callbacks.
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+							  Conditional Callbacks
+								
+ -> :if option when you want to specify under which conditions the callback should be called. 
+ -> If you want to specify the conditions under which the callback should not be called, then you may use the :unless option.
+ 
+ 1). Using :if and :unless with a Symbol and a proc:-
+ 
+ 	     :-   before_save :normalize_card_length, if: :paid_with_card?
+
+		  def normalize_card_length
+		    if self.card_number.split('').length != 10
+		      self.card_number = "0000000000"
+		    end
+		  end
+		  
+ 	     :- using proc -> before_save :normalize_card_length, if: Proc.new { |f| f.paid_with_card? }
+ 	     
+    -> Multiple Callback Conditions
+    
+    	     :- before_save :normalize_card_length, if: [:paid_with_card?, :salary_present?]
+    	     
+    	     	  def normalize_card_length
+		    if self.card_number.split('').length != 10
+		      self.card_number = "0000000000"
+		    end
+		  end
+
+		  def salary_present?
+		    if self.salary
+		      return true
+		    end
+		  end
+		  
+------------------------------------------------------------------------------------------------------------------------------------
+    							Callback Classes
+    							
+-> Sometimes the callback methods that you'll write will be useful enough to be reused by other models. 
+-> Active Record makes it possible to create classes that encapsulate the callback methods, so they can be reused.
+    
+    	     :- class FormNameCallbacks
+		  def before_validation(f)
+		    f.name = "Untitled Form"
+		  end
+		end
+		
+		calling :- before_validation FormNameCallbacks.new
+		
+-------------------------------------------------------------------------------------------------------------------------------------
+							Transaction Callbacks
+							
+-> There are two additional callbacks that are triggered by the completion of a database transaction: after_commit and after_rollback.
+-> already applied above.
+
+	     eg:- def after_commit_check
+		    puts "================================after commit check================================"
+		  end
+
+		  after_commit :after_commit_check
+		  
+	-> some modification:-
+	   :- use can specify to run this call back.   eg:- on: :create, on: :destroy, on: :update.
+	   
+	-> if not want to specify, when to run call back. we can use alias of commit.
+	
+	   :-   after_create_commit
+		after_update_commit
+		after_destroy_commit
+		
+	-> an alias for using the after_commit callback for both create and update together:
+	   :-   after_save_commit
+	   
+	   
+   NOTE :- When a transaction completes, the after_commit or after_rollback callbacks are called for all models created, updated, 
+   	   or destroyed within that transaction.
+

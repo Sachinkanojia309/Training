@@ -1,0 +1,390 @@
+----------------------------------------------------------- Advance ruby ---------------------------------------------------------------
+
+ 1). Access Control :-
+	
+	a). Public Methods − Public methods can be called by anyone. 
+			     Methods are public by default except for initialize, which is always private.
+
+	b). Private Methods − Private methods cannot be accessed, or even viewed from outside the class. 
+			      Only the class methods can access private members.
+
+	c). Protected Methods − A protected method can be invoked only by objects of the defining class and its subclasses. 
+				 Access is kept within the family.
+
+		eg:-
+		class Box
+		   def initialize(w,h)		# constructor method
+		      @width, @height = w, h
+		   end
+
+		   def getArea			 # instance method by default it is public.
+		      getWidth() * getHeight
+		   end
+
+		   def getWidth		# define private accessor methods
+		      @width
+		   end
+		   
+		   def getHeight		# define private accessor methods
+		      @height
+		   end
+		   
+		   private :getWidth, :getHeight  # make them private
+
+		   def printArea			 # instance method to print area
+		      @area = getWidth() * getHeight
+		      puts "Big box area is : #@area"
+		   end
+
+		   protected :printArea	# make method protected
+		end
+
+
+		box = Box.new(10, 20)
+
+		a = box.getArea()			# call instance methods
+		puts "Area of the box is : #{a}"
+
+		# box.printArea()	# if we try to call protected methods it will throw error
+		
+ 2). Inheritance :-
+ 
+ 	-> Inheritance also provides an opportunity to reuse the code functionality and fast implementation time 
+ 	-> but unfortunately Ruby does not support multiple levels of inheritances but Ruby supports mixins. 
+ 	-> A mixin is like a specialized implementation of multiple inheritance in which only the interface portion is inherited.
+ 	-> The syntax for extending a class is simple. Just add a < character and the name of the superclass to your class statement.
+ 	
+ 		eg:-
+ 		class Box			#parent class
+		  def initialize(w,h)
+		    @width, @height = w, h
+		  end
+		  def getArea
+		    @width * @height
+		  end
+		end
+
+		class BigBox < Box		#child class extending parent class
+		  def printArea
+		    @area = @width * @height
+		    puts "Big box area is : #@area"
+		  end
+		end
+
+		box = BigBox.new(5, 7)	#object of child class.
+		box.printArea()
+ 	
+ 	a). Methods Overriding :-
+ 	
+	-> Though you can add new functionality in a derived class, 
+	-> but sometimes you would like to change the behavior of already defined method in a parent class. 
+	-> You can do so simply by keeping the method name same and overriding the functionality of the method.
+	
+		eg:-
+		class Box			#parent class
+		  def initialize(w,h)
+		    @width, @height = w, h
+		  end
+		  def getArea
+		    puts "parent class box area = #{@width * @height}"
+		  end
+		end
+
+		class BigBox < Box		#child class extending parent class
+		  def getArea         #overriding the method 
+		    @area = @width * @height
+		    puts "child class box area is = #@area"
+		  end
+		end
+
+		box = BigBox.new(5, 7)	#object of child class.
+		box.getArea() 
+		
+ 3). Class Information :-
+ 
+	-> If class definitions are executable code, this implies that they execute in the context of some object: 
+	-> self must reference something. Let's find out what it is.
+
+	eg:-
+		class Box
+		   puts "Type of self = #{self.type}"      #return class as type
+		   puts "Name of self = #{self.name}"      #return Box as name of class
+		end
+		
+-------------------------------------------------------------Regular Expressions------------------------------------------------------
+
+ -> A regular expression is a special sequence of characters that helps you match or 
+ -> find other strings or sets of strings using a specialized syntax held in a pattern.
+ -> A regular expression literal is a pattern between slashes or between arbitrary delimiters followed by %r.
+ 
+ Syntax:-
+	/pattern/
+	/pattern/im    # option can be specified
+	%r!/usr/local! # general delimited regular expression
+	
+ eg:-
+ 	line1 = "Cats are smarter than dogs";
+	line2 = "Dogs also like meat";
+
+	if ( line1 =~ /Cats(.*)/ )
+	   puts "Line1 contains Cats"
+	end
+	if ( line2 =~ /Cats(.*)/ )
+	   puts "Line2 contains  Dogs"
+	end
+	
+	
+	1). global (g) :-
+	
+		eg:- /ran/g  #search for every ran word in string.
+		
+	2). + :- find 1 or more same character which are consecutive.
+	
+		eg:- /e+/g   #search for consecutive "e"
+		
+	3). ? :- character may be present or not.
+	
+		eg:- /ea?/g  #a may be present or not.
+		
+	4). * :- find character with 0 or more occurance.
+	
+		eg:- /re*/g  # find 0 or more 'e' with 'r'.
+		
+	5). w :- find any character word.
+	
+		eg:- /\w/g
+		
+	6). s :- find space character.
+	
+		eg:- /\s/g
+		
+	7). [] :- word start with this.
+	
+		eg:- /[fc]/g    #find word start with fc.
+		
+	8). word start and end with .
+	
+		eg :- /[fc]at/g   #word start with fc and end with at with any number of character between them.
+		
+	9). using range.
+	
+		eg :- /[a-zA-Z]at/g   #start character in range a-z , A-Z and end with at.
+		
+	10). ^ :- match first element .
+	
+		eg :- /^[Tt]he/g      #if first word is The or the then return true.
+		
+	11). $ :- match last element.
+	
+		eg :- /\.$/gm         # $ for last word and m for multiline.
+		
+	12). \d :- for integer value.
+	
+		eg :- /\d/g           #find integer value.
+		
+	13). integer with range.
+	
+		eg :- /\d{10}/g       # 10 integer values.
+		
+	14). | :- for "or" condition.
+	
+		eg :- /(t|e|r){2,3}/g # matches between 2 and 3 words.
+		 
+		 
+		 
+------------------------------------------------------- Ruby/DBI - Database Access --------------------------------------------------
+
+ -> DBI stands for Database Independent Interface for Ruby, 
+ -> which means DBI provides an abstraction layer between the Ruby code and the underlying database, 
+ -> allowing you to switch database implementations really easily. 
+ -> It defines a set of methods, variables, and conventions that provide a consistent database interface, independent of the actual database being used.
+ 
+ 1). The general architecture for Ruby DBI uses two layers −
+
+	a). The database interface (DBI) layer. 
+	 -> This layer is database independent and provides a set of common access methods that are used the same way regardless of the type of database server with which you're communicating.
+
+	b). The database driver (DBD) layer. 
+	 -> This layer is database dependent; different drivers provide access to different database engines. 
+	 -> There is one driver for MySQL, another for PostgreSQL, another for InterBase, another for Oracle, and so forth. 
+	 -> Each driver interprets requests from the DBI layer and maps them onto requests appropriate for a given type of database server.
+
+ 2). To access PostgreSQL databases on Ubuntu using Ruby, you need to install the pg gem, 
+  -> which provides a Ruby interface to PostgreSQL. Here are the basic steps to connect to a PostgreSQL database using Ruby on Ubuntu:
+
+	step1 :- Install the PostgreSQL client library by running the following command in the terminal:
+
+		sudo apt-get install libpq-dev
+		
+	step2 :- Install the pg gem by running the following command in the terminal:
+
+		gem install pg
+		
+	step3 :- Ruby code to access a PostgreSQL database
+
+	code:-	require 'pg'
+
+		# Set up the connection parameters
+		conn = PG.connect(
+		  dbname: 'beryl_systems',
+		  user: 'postgres',
+		  password: 'changeit',
+		  host: 'localhost',
+		  port: 5432 # This is the default port for PostgreSQL
+		)
+
+		# Execute a query and retrieve the results
+		result = conn.exec('SELECT * FROM employee')
+		result.each do |row|
+		  puts row.inspect
+		end
+
+		# Close the connection
+		conn.close
+
+	step4 :- #Inserting values in database table using ruby.
+
+	code :- require 'pg'
+
+		# Connect to the database
+		conn = PG.connect(
+		  dbname: 'beryl_systems', 
+		  user: 'postgres', 
+		  password: 'changeit',
+		  host: 'localhost',
+		  port: 5432
+		)
+
+		# Define the SQL statement to insert a row into the table , $1 and so on are used as place holder.
+		sql = "INSERT INTO employee (first_name, last_name, gender, date_of_birth) VALUES ($1, $2, $3, $4)"
+
+		# Define the values to be inserted
+		values = [
+		  ['Akash', 'sharma', 'male','2002-07-09'],
+		  ['vikash', 'singh', 'male','1998-05-23'],
+		  ['simran', 'tandan', 'female','2001-10-6']
+		]
+
+		# Execute the SQL statement with the values
+		values.each do |row_values|
+		  conn.exec_params(sql, row_values)
+		end
+
+		# Close the database connection
+		conn.close
+
+-----------------------------------------------------------Ruby - Built-in Functions--------------------------------------------------
+
+ 1). Functions for Numbers :-
+ 
+	Here is a list of Built-in Functions related to number :-
+	
+	Sr.No.		Methods & Description
+	1		n + num
+			n - num
+			n * num
+			n / num
+
+	2		n % num
+
+	3		n ** num    # Exponentiation.
+
+	4		n.abs	    # Returns the absolute value of n.
+
+	5		n.ceil	    # Returns the smallest integer greater than or equal to n.
+
+	6		n.divmod( num)    # Returns an array containing the quotient and modulus from dividing n by num.
+
+	8		n.floor	   # Returns the largest integer less than or equal to n.
+
+	9		n.integer? 	   # Returns true if n is an integer.
+
+	10		n.modulo( num)	   # Returns the modulus obtained by dividing n by num and rounding the quotient with floor
+
+	11		n.nonzero?	   # Returns n if it isn't zero, otherwise nil.
+
+	12		n.remainder( num)  # Returns the remainder obtained by dividing n by num and removing decimals from the quotient. 
+
+	13		n.round	   # Returns n rounded to the nearest integer.
+
+	14		n.truncate	   # Returns n as an integer with decimals removed.
+
+	15		n.zero?	   # Returns zero if n is 0.
+
+	16		n & num
+			n | num
+			n ^ num	   # Bitwise operations: AND, OR, XOR, and inversion.
+
+	17		n << num
+			n >> num	   # Bitwise left shift and right shift.
+
+	18		n[num]		   # Returns the value of the numth bit from the least significant bit, which is n[0].
+
+	19		n.chr		   # Returns a string containing the character for the character code n.
+
+	20		n.next
+			n.succ		   # Returns the next integer following n. Equivalent to n + 1.
+
+	21		n.size		   # Returns the number of bytes in the machine representation of n.
+
+	22		n.step( upto, step) {|n| ...}	# Iterates the block from n to upto, incrementing by step each time.
+
+	23		n.times {|n| ...}		# Iterates the block n times.
+
+	24		n.to_f			   # Float conversion may lose precision information.
+
+	25		n.to_int		   # Returns n after converting into interger number.
+	
+	
+------------------------------------------------------ Sending Email using Ruby - SMTP -----------------------------------------------
+
+ -> Simple Mail Transfer Protocol (SMTP) is a protocol, which handles sending e-mail and routing e-mail between mail servers.
+ 
+ 1). How To Set Up an SMTP Server on Ubuntu :-
+ 
+ 	Step 1: Update Your Server
+ 		-> sudo apt update
+ 		
+ 	step 2: Install Postfix
+ 		-> sudo apt install postfix
+ 		
+ 	note :- A Postfix configuration window will pop up in the process of installation.
+ 	-> The configuration comes with Internet Site as the default mail configuration type. 
+ 	-> That is the recommended type of configuration for this particular purpose. 
+ 	-> Thus, you should press TAB, select OK, and then press ENTER.
+ 		
+ 	step 3: Configure Postfix
+ 	 
+ 	 a). back up the file before you make any edits. You may need the original version.
+		-> sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
+
+	 b). You can then access the file using the following commands.
+	 	-> sudo nano /etc/postfix/main.cf
+
+		-> after opening the file in nano editor ,change the inet_interface "all" to "loopback-only"
+		
+	step 4: Apply Changes and Start the Postfix Server.
+		-> to save file follow the instruction given in nano editor.
+		-> to enable Postfix :-
+			:- sudo systemctl enable postfix
+			
+	step 5: Configure Firewall
+		-> sudo ufw allow "Postfix"
+		-> sudo ufw allow "Postfix SMTPS"
+		-> sudo ufw allow "Postfix Submission"
+		
+	step 6: Test the STMP server
+		-> sudo telnet 127.0.0.1 25
+		
+		if show Connected to localhost, means connection successful. 
+		
+	step 7: install the mail-sending packages of Postfix
+		-> sudo apt install bsd-mailx
+		-> sudo mailx -r test@linhint-s "SUBJECT"[Email_address]
+
+ 	
+ 		
+ 	
+
+		
+	

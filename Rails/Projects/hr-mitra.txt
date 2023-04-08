@@ -1,0 +1,170 @@
+------------------------------------------------------------- hr-mitra ---------------------------------------------------------------
+
+ step1 :- Create Application:-
+ 	
+ 	-> Type in terminal
+ 	   a). application                  
+ 	   	:- rails new hr-mitra(application_name)
+ 	   	
+ 	   b). move to project folder         
+ 	   	:- bundle install
+ 	   	
+ 	   c). open project folder in vscode  
+ 	   	:- code .   
+ 	   	
+ 	   d). start rails server
+ 	   	:- rails server or rails s
+ 	   	
+ step2:- Creating custome controller in Rails.
+ 
+ 	-> work of controller
+ 		:- sense request from browser.
+ 		:- produce appropriate output.
+ 		
+ 	NOTE :- MVC works in App dir.
+ 	
+ 	a). app/controller
+ 		*). basics
+ 			:- Every controller must be inherited by ActionController::Base
+ 			:- controller file should be with proper naming
+ 				eg :- home_controller.rb
+ 				
+ 		*). Action methods
+ 			:- it is similer to plain ruby method but when we make it in controller then it is refer as "action".
+ 			:- when method present in controller and have routing then that method is called as action.
+ 			
+ 				:- In home_controller
+ 					class HomeController < ActionController::Base
+					  def index        #action
+					  end
+					end
+					
+ 			:- if you want to create method, which is not action then it must be private
+ 				
+ 				eg:-
+ 					private
+ 					def method
+ 					end
+ 					 
+ 	b). app/config/routes.rb
+ 		*). basics
+ 			i).   get -> when we want to retrive data.
+ 			ii).  post -> when to save resource on server first time.
+ 			iii). delete -> when to delete resource from server.
+ 			iv).  patch -> when to insert and update in existing resource. 
+ 			
+ 		use of get :-
+ 			1 way). get 'home/index'     #home is a controller name , index is a action method. (127.0.0.1/home/index)
+ 			2 way). get '/home' => 'home#index'       # (127.0.0.1/home)
+ 			
+ 		NOTE :- 406 error ,when no template(html)
+ 		     :- 200 when request successfully served.
+ 		     
+ 	c). app/views
+ 	
+ 		-> used to show content on browser. (means html,css etc content)
+ 		
+ 		a). Create dir with same name as controller name (home_controller)
+ 			:- dir id home
+ 			
+ 		b). move to app/views/home
+ 			-> now create html file with same name of action.
+ 				:- index.html.erb
+ 				
+ 			-> In index file.
+ 				:- <h1> Hello world </h1>
+ 				   <p> I am learning rails! </p> 
+ 			
+ step3 :- Custom root page:-
+ 
+ 	a). To change root-
+ 	
+ 		-> move to App/config/routes.rb
+ 		:- root "home#index"             #home isa controller and index is an action name.
+ 		
+ 		NOTE :- root always as a "get" type because other http work redirects to other pages.
+ 		
+ 	b). when we want to show on browser, we have to create instance variable in Controller->action -
+ 	
+ 		-> move to app/controllers/home_controller.rb
+ 		
+ 		:- def index
+		     @title_text = "Hello World"                                  #dynamic data into erb template.
+		     @subtitle_text = "I am using instance variable in Rails!"
+		   end
+		   
+	c). using instance variable in index.html.erb file using "rails tags".
+	
+		:- <h1><%= @title_text %> </h1>
+		   <p><%= @subtitle_text %></p>
+ 		
+ 		NOTE :- <%= %> , rails tag to display on browser.
+ 	                <% %> , rails tag used not to display (like for loop).
+ 
+-----------------------------------------------------------------------------------------------------------------------------------	
+ 	
+ 1). Creating controller using Rails generator:-
+ 
+ 	-> rails generate controller <name_controller> action1 .. .. ..action(n)  or we can replace generate as g.
+ 	
+ 	:- beryl@beryl-HP-Pavilion-Notebook:~/Desktop/Training/Rails/Projects/hr-mitra$ rails g controller pages about_us contact_us privacy_policy terms_and_conditions
+ 	
+ 	-> here controller name = pages
+ 	        action names = about_us , contact_us, privacy_policy, terms_and_conditions
+ 	
+ 	-> After using generator this files are created:-
+ 	
+	      create  app/controllers/pages_controller.rb         # pages controller created
+	       route  get 'pages/about_us'			    # route created for all the actions with default http work "get".
+		      get 'pages/contact_us'
+		      get 'pages/privacy_policy'
+		      get 'pages/terms_and_conditions'
+	      invoke  erb
+	      create    app/views/pages			    # in view generator create pages dir and all html.erb files for actions.
+	      create    app/views/pages/about_us.html.erb
+	      create    app/views/pages/contact_us.html.erb
+	      create    app/views/pages/privacy_policy.html.erb
+	      create    app/views/pages/terms_and_conditions.html.erb
+	      invoke  test_unit
+	      create    test/controllers/pages_controller_test.rb
+	      invoke  helper
+	      create    app/helpers/pages_helper.rb
+	      invoke    test_unit
+ 
+ 	*). Customize routes to make url clean.
+ 	
+ 		Before :- Rails.application.routes.draw do
+			    get 'pages/about_us'
+			    get 'pages/contact_us'
+			    get 'pages/privacy_policy'
+			    get 'pages/terms_and_conditions'
+			    root "home#index"
+			  end
+			  
+		After :- Rails.application.routes.draw do
+			   root "home#index"
+			   get 'about' => 'pages#about_us'
+			   get 'contact' => 'pages#contact_us'
+			   get 'privacy-policy' => 'pages#privacy_policy'
+			   get 'terms-and-conditions' => 'pages#terms_and_conditions'
+			 end
+			 
+--------------------------------------------------------------------------------------------------------------------------------------
+
+ 2). Working with link_to helper in Rails. (link pages)
+ 
+ -> app/views/home/index.html.erb
+ -> link_to helper are used to create an anchar tag.
+ 
+ 	1 way). <%= link_to 'About Us', about_path %>  # 'About Us' is the value to show as link on page and about_path is a path .
+ 	2 way). <%= link_to 'About Us', controller: :pages , action: :about_us %>
+ 	3 way). <%= link_to 'About us', '/about' %>
+ 	4 way). <%= link_to nil, about_path %>         # link show as /about
+ 	
+ 	*). more parameters in link_to:-
+ 	
+ 		-> <%= link_to 'About Us' , about_path , target: '_blank' , data: {name: 'about-page',resource: 'pages'} %> 
+ 		
+ 			:- target is used as to redirect to new tag, here target is blank page.
+ 			:- providing data for about page, must be in hash form.
+

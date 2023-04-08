@@ -1,0 +1,233 @@
+------------------------------------------------------------------------------------------------------------------------------------
+								HASHES
+								
+ Intro :-
+ -> A Hash maps each of its unique keys to a specific value.
+ -> A Hash has certain similarities to an Array, but:
+ -> An Array index is always an Integer.
+ -> A Hash key can be (almost) any object.
+ 
+ Hash Data Syntax :-
+
+ -> The older syntax for Hash data uses the “hash rocket,” =>:
+
+	h = {:foo => 0, :bar => 1, :baz => 2}
+	h # => {:foo=>0, :bar=>1, :baz=>2}
+
+ -> Alternatively, but only for a Hash key that’s a Symbol, you can use a newer JSON-style syntax, where each bareword becomes a Symbol:
+
+	h = {foo: 0, bar: 1, baz: 2}
+	h # => {:foo=>0, :bar=>1, :baz=>2}
+	
+ -> You can also use a String in place of a bareword:
+
+	h = {'foo': 0, 'bar': 1, 'baz': 2}
+	h # => {:foo=>0, :bar=>1, :baz=>2}
+	
+ -> Hash value can be omitted, meaning that value will be fetched from the context by the name of the key:
+
+	x = 0
+	y = 100
+	h = {x:, y:}
+	h # => {:x=>0, :y=>100}
+
+
+ 1). Common Uses :-
+ 
+	a). You can use a Hash to give names to objects:
+
+		eg:-	3.2.1 :010 > person = {name: 'sachin', surname: 'kanojia'}
+			 => {:name=>"sachin", :surname=>"kanojia"} 
+
+	b). You can use a Hash to give names to method arguments:
+
+		eg:-	3.2.1 :011 > def method(hash)
+			3.2.1 :012 >   p hash
+			3.2.1 :013 > end
+		some_method({foo: 0, bar: 1, baz: 2}) # => {:foo=>0, :bar=>1, :baz=>2}
+		
+		Note: when the last argument in a method call is a Hash, the curly braces may be omitted:
+			method(foo: 0, bar: 1, baz: 2) # => {:foo=>0, :bar=>1, :baz=>2}
+		
+	c). You can use a Hash to initialize an object:
+
+		class Dev
+		  attr_accessor :name, :language
+		  def initialize(hash)
+		    self.name = hash[:name]
+		    self.language = hash[:language]
+		  end
+		end
+		matz = Dev.new(name: 'Matz', language: 'Ruby')
+		matz # => #<Dev: @name="Matz", @language="Ruby">
+		
+	NOTE :- attr_accessor -> use to create getter and setter method for both name and language instance variable.
+			       -> can be modified and retrieve values outside of the class.
+ 
+ 2). Creating a Hash
+
+	a). Create an empty Hash by calling method Hash.new
+
+		3.2.1 :007 > t = Hash.new
+		 => {} 
+		3.2.1 :008 > t.class
+		 => Hash 
+
+	b). You can create a Hash by calling method Hash.[].
+
+		h = Hash[]
+		h # => {}
+		
+	      ->Create a Hash with initial entries:
+		h = Hash[foo: 0, bar: 1, baz: 2]
+		h # => {:foo=>0, :bar=>1, :baz=>2}
+
+	c). You can create a Hash by using its literal form (curly braces).
+
+		h = {}
+		h # => {}
+		
+	      ->Create a Hash with initial entries:
+		h = {foo: 0, bar: 1, baz: 2}
+		h # => {:foo=>0, :bar=>1, :baz=>2} 
+		
+ 3). Hash Value Basics
+ 
+	a). The simplest way to retrieve a Hash value (instance method []):
+
+		h = {foo: 0, bar: 1, baz: 2}
+		h[:foo] # => 0
+		
+	b). The simplest way to create or update a Hash value (instance method []=):
+	
+		h = {foo: 0, bar: 1, baz: 2}
+		h[:bat] = 3 # => 3
+		h # => {:foo=>0, :bar=>1, :baz=>2, :bat=>3}
+		h[:foo] = 4 # => 4
+		h # => {:foo=>4, :bar=>1, :baz=>2, :bat=>3}
+		
+	c). The simplest way to delete a Hash entry (instance method delete):
+
+		h = {foo: 0, bar: 1, baz: 2}
+		h.delete(:bar) # => 1
+		h # => {:foo=>0, :baz=>2}
+		
+ 4). Entry Order
+	-> A Hash object presents its entries in the order of their creation. This is seen in:
+	-> Iterative methods such as each, each_key, each_pair, each_value.
+	-> Other order-sensitive methods such as shift, keys, values.
+	-> The String returned by method inspect.
+
+	a). A new Hash has its initial ordering per the given entries:
+
+		h = Hash[foo: 0, bar: 1]
+		h # => {:foo=>0, :bar=>1}
+		
+	b). New entries are added at the end:
+
+		h[:baz] = 2
+		h # => {:foo=>0, :bar=>1, :baz=>2}
+		
+	c). Updating a value does not affect the order:
+
+		h[:baz] = 3
+		h # => {:foo=>0, :bar=>1, :baz=>3}
+		
+	d). But re-creating a deleted entry can affect the order:
+
+		h.delete(:foo)
+		h[:foo] = 5
+		h # => {:bar=>1, :baz=>3, :foo=>5}
+		
+ 5). Modifying an Active Hash Key
+ 
+ -> Modifying a Hash key while it is in use damages the hash’s index.
+
+	a). This Hash has keys that are Arrays:
+
+		a0 = [ :foo, :bar ]
+		a1 = [ :baz, :bat ]
+		h = {a0 => 0, a1 => 1}
+		h.include?(a0) # => true
+		h[a0] # => 0
+		a0.hash # => 110002110
+		
+	b). Modifying array element a0[0] changes its hash value:
+
+		a0[0] = :bam
+		a0.hash # => 1069447059
+		
+		And damages the Hash index:
+		h.include?(a0) # => false
+		h[a0] # => nil
+		
+	c). You can repair the hash index using method rehash:
+
+		h.rehash # => {[:bam, :bar]=>0, [:baz, :bat]=>1}
+		h.include?(a0) # => true
+		h[a0] # => 0
+		
+	d). A String key is always safe. 
+	    That’s because an unfrozen String passed as a key will be replaced by a duplicated and frozen String:
+
+		s = 'foo'
+		s.frozen? # => false
+		h = {s => 0}
+		first_key = h.keys.first
+		first_key.frozen? # => true
+		
+ 6). Default Values
+ -> The methods [], values_at and dig need to return the value associated to a certain key. 
+ -> When that key is not found, that value will be determined by its default proc (if any) or else its default (initially ‘nil`).
+
+	a). You can retrieve the default value with method default:
+
+		h = Hash.new
+		h.default # => nil
+		
+	b). You can set the default value by passing an argument to method Hash.new or with method default=
+
+		h = Hash.new(-1)
+		h.default # => -1
+		h.default = 0
+		h.default # => 0
+		
+	c). This default value is returned for [], values_at and dig when a key is not found:
+
+		counts = {foo: 42}
+		counts.default # => nil (default)
+		counts[:foo] = 42
+		counts[:bar] # => nil
+		counts.default = 0
+		counts[:bar] # => 0
+		counts.values_at(:foo, :bar, :baz) # => [42, 0, 0]
+		counts.dig(:bar) # => 0
+		
+	d). Note that the default value is used without being duplicated. It is not advised to set the default value to a mutable object:
+
+		synonyms = Hash.new([])
+		synonyms[:hello] # => []
+		synonyms[:hello] << :hi # => [:hi], but this mutates the default!
+		synonyms.default # => [:hi]
+		synonyms[:world] << :universe
+		synonyms[:world] # => [:hi, :universe], oops
+		synonyms.keys # => [], oops
+
+
+ 7). Default Proc
+ 
+ -> A Proc is a block of code in Ruby that can be saved as a variable and executed later. 
+ -> The default Proc is a special type of Proc that has a default block of code which is executed when the Proc is called and no other block of code is provided. 
+ -> It allows you to define a default behavior for a Proc object.
+ 
+ 	eg:- 
+ 	
+ 	default_proc = Proc.new { puts "Default block executed" }   #creating default proc
+ 	
+	default_proc.call 					      #call default proc
+	Output: "Default block executed"
+	
+	default_proc.call { puts "Another block executed" } 	      #call default proc with block but return the default value.
+	Output: "Default block executed"
+ 
+ 

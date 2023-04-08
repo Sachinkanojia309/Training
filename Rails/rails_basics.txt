@@ -1,0 +1,714 @@
+------------------------------------------------------------ Rails basics -----------------------------------------------------------------
+
+ 1). What is Rails?
+	-> An extremely productive web-application framework.
+	-> You could develop a web application at least ten times faster with Rails than you could with a typical Java framework.
+	-> An open source Ruby framework for developing database-backed web applications.
+	-> Configure your code with Database Schema.
+	-> No compilation phase required.
+	
+	latest version -> rails 7.0.4.3
+	
+ 2). Full Stack Framework :-
+	-> Includes everything needed to create a database-driven web application, using the Model-View-Controller pattern.
+	-> Being a full-stack framework means all the layers are built to work seamlessly together with less code.
+	-> Requires fewer lines of code than other frameworks.
+	
+ 3). Three environments :-
+	-> Rails gives you three default environments: development, testing, and production. 
+	-> Each behaves slightly differently, making your entire software development cycle easier.
+	
+ 4). Rails installation :-
+ 
+ 	a). To install Rails, use the gem install command provided by RubyGems:
+		-> gem install rails      # automatically install latest version.
+
+	b). To verify that you have everything installed correctly, you should be able to run the following in a new terminal:
+		-> rails --version
+		
+ 5). Creating new application :-
+ 
+ 	-> rails new application_name     #it will create application with sql database
+ 	
+ 	-> rails new application_name -d postgresql    #it will create application with specified database.
+ 	
+ 	-> Setup config for database.yml :-
+
+		in <project-name>/config/database.yml
+
+		uncomment and edit the information ,
+		database :
+		username :
+		password :
+		host :
+		port :
+	 	
+ 6). start the web server :-
+ 	-> you need to start a web server on your development machine. 
+ 	-> You can do this by running the following command in the blog directory:
+ 	
+ 		-> rails server or rails s
+
+ 7). If you enter a new database , which is not present on local system then use,
+ 
+ 	-> For create database on local machine corresponding to project :
+		rake db:create		#It creates database as name in database.yml of project to local machine.
+
+	-> For drop or delete the database , 
+		rack db:drop 
+		
+ 8). Say "hello, rails"
+ 
+ 	-> To get Rails saying "Hello", you need to create at minimum a route, a controller with an action, and a view. 
+ 	-> A route maps a request to a controller action. A controller action performs the necessary work to handle the request, 
+ 	-> and prepares any data for the view. A view displays data in a desired format.
+ 	
+ 	*). adding a route to our routes file, config/routes.rb, at the top of the Rails.application.routes.draw
+ 	
+ 		eg :- Rails.application.routes.draw do
+		        get "articles/index"
+
+		        # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+		      end
+		      
+	*). The route above declares that GET /articles requests are mapped to the index action of ArticlesController.
+
+		-> To create ArticlesController and its index action, we'll run the controller generator 
+			(with the --skip-routes option because we already have an appropriate route).
+
+		:- rails generate controller Articles index --skip-routes
+		
+	NOTE :- to run the hello rails provide full path as "127.0.0.1:3000/articles/index"    
+	
+ 9). Setting the Application Home Page :-
+ 
+	-> At the moment, http://localhost:3000 still displays a page with the Ruby on Rails logo. 
+	-> Let's display our "Hello, Rails!" text at http://localhost:3000 as well. 
+	-> To do so, we will add a route that maps the root path of our application to the appropriate controller and action.
+
+	Let's open config/routes.rb, and add the following root route to the top of the Rails.application.routes.draw block:
+
+	eg:-	Rails.application.routes.draw do
+		  root "articles#index"		# here '#' symbol is used to point as root .
+		end
+		
+ 10). MVC (Model-view-Controller):-
+ 
+	-> So far, we've discussed routes, controllers, actions, and views. 
+	-> All of these are typical pieces of a web application that follows the MVC (Model-View-Controller) pattern. 
+	-> MVC is a design pattern that divides the responsibilities of an application to make it easier to reason about. 
+	-> Rails follows this design pattern by convention.
+
+	a). Generating a Model:-
+	
+		-> A model is a Ruby class that is used to represent data. 
+		-> Additionally, models can interact with the application's database through a feature of Rails called Active Record.
+		-> To define a model, we will use the model generator:
+		
+			:-rails generate model Article title:string body:text
+			
+			NOTE :- Model names are singular, because an instantiated model represents a single data record.
+			
+	b). Database Migrations:-
+	
+		-> Migrations are used to alter the structure of an application's database. 
+		-> In Rails applications, migrations are written in Ruby so that they can be database-agnostic.
+
+		    :-	class CreateArticles < ActiveRecord::Migration[7.0]	#this code is written at (db/migrate
+			  def change						#/<timestamp>_create_articles.rb)
+			    create_table :articles do |t|
+			      t.string :title
+			      t.text :body
+
+			      t.timestamps
+			    end
+			  end
+			end
+			
+		-> By default, the create_table method adds an id column as an auto-incrementing primary key. 
+		-> Inside the block for create_table, two columns are defined: title and body. 
+		   These were added by the generator because we included them in our generate command above.
+
+		-> On the last line of the block is a call to t.timestamps. 
+		   This method defines two additional columns named created_at and updated_at. As we will see, 
+		   Rails will manage these for us, setting the values when we create or update a model object.
+		   
+	  -> run our migration with the following command:
+		:- rails db:migrate
+		
+	c). Using a Model to Interact with the Database:-
+	
+		-> To play with our model a bit, we're going to use a feature of Rails called the console(irb).
+		-> it also automatically loads Rails and our application code.
+
+			-> Let's launch the console with this command:
+				:- rails console
+		
+			-> when prompt get opened, we can initialize a new Article object:
+				:- irb> article = Article.new(title: "Hello Rails", body: "I am on Rails!")
+	
+		-> It's important to note that we have only initialized this object. 
+		-> This object is not saved to the database at all. It's only available in the console at the moment. 
+		-> To save the object to the database, we must call save:
+
+			:- irb> article.save
+			
+			note :- automatic id,created_at and updated_at are generated by rails.
+			
+	d). Showing a List of Articles:-
+		-> Let's go back to our controller in app/controllers/articles_controller.rb, and change the index action to fetch all articles from the database:
+
+		   :-	class ArticlesController < ApplicationController
+			  def index
+			    @articles = Article.all
+			  end
+			end
+		
+		-> Controller instance variables can be accessed by the view. 
+		-> That means we can reference @articles in app/views/articles/index.html.erb.
+		-> Let's open that file, and replace its contents with:
+
+		   :-	<h1>Articles</h1>
+
+			<ul>
+			  <% @articles.each do |article| %>
+			    <li>
+			      <%= article.title %>
+			    </li>
+			  <% end %>
+			</ul>
+			
+ 11). CRUDit Where CRUDit Is Due :-
+ 
+	-> Almost all web applications involve CRUD (Create, Read, Update, and Delete) operations. 
+	-> You may even find that the majority of the work your application does is CRUD. 
+	-> Rails acknowledges this, and provides many features to help simplify code doing CRUD.
+	
+	a). Showing a Single Article
+		-> We currently have a view that lists all articles in our database. 
+		-> Let's add a new view that shows the title and body of a single article.
+
+		-> We start by adding a new route that maps to a new controller action (which we will add next). 
+		-> Open config/routes.rb, and insert the last route shown here:
+
+		    :-	Rails.application.routes.draw do
+			  root "articles#index"
+
+			  get "/articles", to: "articles#index"
+			  get "/articles/:id", to: "articles#show"
+			end
+			
+		-> The new route is another get route, but it has something extra in its path: :id. 
+		-> This designates a route parameter. A route parameter captures a segment of the request's path, and puts that value into the params Hash, which is accessible by the controller action. 
+		-> For example, when handling a request like GET http://localhost:3000/articles/1, 1 would be captured as the value for :id, which would then be accessible as params[:id] in the show action of ArticlesController.
+
+		-> Let's add that show action now, below the index action in app/controllers/articles_controller.rb:
+
+		    :-	class ArticlesController < ApplicationController
+			  def index
+			    @articles = Article.all
+			  end
+
+			  def show
+			    @article = Article.find(params[:id])
+			  end
+			end
+			
+		-> The show action calls Article.find (mentioned previously) with the ID captured by the route parameter. 
+		-> The returned article is stored in the @article instance variable, so it is accessible by the view. 
+		-> By default, the show action will render app/views/articles/show.html.erb.
+
+		   -> Let's create app/views/articles/show.html.erb, with the following contents:
+
+			<h1><%= @article.title %></h1>
+
+			<p><%= @article.body %></p>
+
+		    Now we can see the article when we visit http://localhost:3000/articles/1!
+
+		-> To finish up, let's add a convenient way to get to an article's page. 
+		-> We'll link each article's title in app/views/articles/index.html.erb to its page:
+
+		  :-	<h1>Articles</h1>
+
+			<ul>
+			  <% @articles.each do |article| %>
+			    <li>
+			      <a href="/articles/<%= article.id %>">
+				<%= article.title %>
+			      </a>
+			    </li>
+			  <% end %>
+			</ul>
+			
+			
+	b). creating a new article :-
+		-> app/controller/article_controller.rb
+		
+		:-      class ArticlesController < ApplicationController
+			  def index
+			    @articles = Article.all
+			  end
+
+			  def show
+			    @article = Article.find(params[:id])
+			  end
+
+			  def def new
+			    @article = Article.new 
+			  end
+
+			  def create
+			    @article = Article.new(title: "...", body: "...")
+
+			    if @article.save
+			      redirect_to @article
+			    else
+			      render :new, status: :unprocessable_entity
+			    end
+			  end
+			end
+
+		->> using form builder :- used to build the form
+		
+		:-	<h1> New Article</h1>
+
+			<%= form_with model: @article do |form| %>  <%# form_with helper method instantiates a form builder%>
+			  <div>
+			    <%= form.label :title %><br>    <%# calling label and text_field method using form_with %>
+			    <%= form.text_field :title %>
+			  </div>
+
+			  <div>
+			    <%= form.label :body %><br>
+			    <%= form.text_area :body %>
+			  </div>
+
+			  <div>
+			    <%= form.submit%>
+			  </div>
+			<% end %>
+		
+		->> Using Strong Parameters :-
+			-> a private method in app/controllers/articles_controller.rb named article_params that filters params.
+			
+			:-        def create
+				    @article = Article.new(article_params)
+
+				    if @article.save
+				      redirect_to @article
+				    else
+				      render :new, status: :unprocessable_entity
+				    end
+				  end
+
+				  private
+				  def article_params
+				    params.require(:article).permit(:title, :body)
+				  end
+		
+		->> Validations and Displaying Error Messages :-
+			-> app/model/article.rb
+			
+			:-      class Article < ApplicationRecord
+				  validates :title, presence: true
+				  validates :body, presence: true, length: { minimum: 10 }
+				end
+				
+			-> modify app/views/articles/new.html.erb to display any error messages for title and body
+			
+			:-     <h1> New Article</h1>
+
+				<%= form_with model: @article do |form| %>  <%# form_with helper method instantiates a form builder%>
+				  <div>
+				    <%= form.label :title %><br>    <%# calling label and text_field method using form_with %>
+				    <%= form.text_field :title %>
+				    <% @article.errors.full_messages_for(:title).each do|message| %>   <%# full_message_for is used to return an array of user-friendly error message %>
+				      <div><%= message %></div>
+				    <%end%>
+				  </div>
+
+				  <div>
+				    <%= form.label :body %><br>
+				    <%= form.text_area :body %><br>
+				    <% @article.errors.full_messages_for(:body).each do |message| %>
+				      <div><%= message %></div>
+				    <%end%>
+				  </div>
+
+				  <div>
+				    <%= form.submit%>
+				  </div>
+				<% end %>
+				
+			NOTE :- http://localhost:3000/articles/new   to run the above content.
+			
+		 -> "CR" is used from crud in (a) as read and (b) as create.
+		 
+ 	c). Updating an Article :-
+ 	
+ 	-> handled by a controller's edit and update actions. Let's add a typical implementation of these actions to app/controllers/articles_controller.rb
+ 	
+ 		:-       def edit
+			    @article = Article.find(params[:id])
+			  end
+
+			  def update
+			    @article = Article.find(params[:id])
+
+			    if @article.update(article_params)
+			      redirect_to @article
+			    else
+			      render :edit, status: :unprocessable_entity
+			    end
+			  end
+			  
+	-> Using Partials to Share View Code :-
+	
+	   :-     <%= form_with model: article do |form| %>   <%# partials are shared code that,s why article is a local variable not an instance variable %>
+		  <div>
+		    <%= form.label :title %><br>
+		    <%= form.text_field :title %>
+		    <% article.errors.full_messages_for(:title).each do |message| %>
+		      <div><%= message %></div>
+		    <%end%>
+		  </div>
+
+		  <div>
+		    <%= form.label :body %><br>
+		    <%= form.text_area :body %><br>
+		    <% article.errors.full_messages_for(:body).each do |message| %>
+		      <div><%= message %></div>
+		    <%end%>
+		  </div>
+
+		  <div>
+		    <%= form.submit %>
+		  </div>
+		<%end%>
+
+	-> Let's update app/views/articles/new.html.erb to use the partial via render:
+
+	  :-	<%= render "form", article: @article %>
+	  
+	-> create a very similar app/views/articles/edit.html.erb:
+
+	  :-	<h1>Edit Article</h1>
+		<%= render "form", article: @article %>
+	
+	-> let's link to the edit page from the bottom of app/views/articles/show.html.erb:
+
+	  :-	<h1><%= @article.title %></h1>
+		<p><%= @article.body %></p>
+
+		<ul>
+		  <li><%= link_to "Edit", edit_article_path(@article) %></li>
+		</ul>
+
+
+	->>> To run above :-  http://localhost:3000/articles/1/edit
+	
+	
+	d). Deleting an Article :-
+	
+	-> Deleting a resource is a simpler process than creating or updating. 
+	-> It only requires a route and a controller action. 
+	-> And our resourceful routing (resources :articles) already provides the route, which maps DELETE /articles/:id requests to the destroy action of ArticlesController.
+	
+	-> add a typical destroy action to app/controllers/articles_controller.rb, below the update action.
+	
+		:- def destroy
+		    @article = Article.find(params[:id])
+		    @article.destroy
+
+		    redirect_to root_path, status: :see_other
+		  end
+	
+	-> add a link at the bottom of app/views/articles/show.html.erb so that we can delete an article from its own page.
+	
+		:-      <ul>
+			  <li><%= link_to "Edit", edit_article_path(@article) %></li>
+			  <li><%= link_to "Destroy", article_path(@article), data: {
+			    turbo_method: :delete,
+			    turbo_confirm: "Are you sure?"
+			    } %>
+			  </li>
+			</ul>
+				
+				
+	before deletion :-
+	
+	 id |        title        |                 body                 |         created_at         |         updated_at         
+	----+---------------------+--------------------------------------+----------------------------+----------------------------
+	  2 | abc                 | do something which you want          | 2023-03-20 10:40:32.395657 | 2023-03-20 10:40:32.395657
+	  3 | xyz                 | do something which i like           +| 2023-03-20 10:41:08.831019 | 2023-03-20 10:41:08.831019
+	    |                     |                                      |                            | 
+	  1 | Hello something one | I am editing something on Rails! one | 2023-03-15 12:51:18.658259 | 2023-03-20 12:13:05.629671
+	  
+	  
+	 After deletion :-
+	 
+	 id | title |           body            |         created_at         |         updated_at         
+	----+-------+---------------------------+----------------------------+----------------------------
+	  3 | xyz   | do something which i like+| 2023-03-20 10:41:08.831019 | 2023-03-20 10:41:08.831019
+	    |       |                           |                            | 
+
+
+----------------------------------------------------------- Adding a Second Model --------------------------------------------------
+
+ a). Generating a Model:-
+ 
+ 	:- rails generate model Comment commenter:string body:text article:references   #reference for foreign key
+ 	
+ 	-> After the above command 4 files are created.
+ 	
+ 	File							Purpose
+ 	
+	db/migrate/20140120201010_create_comments.rb		Migration to create the comments table in your database 
+								(your name will include a different timestamp)
+	
+	app/models/comment.rb					The Comment model
+	test/models/comment_test.rb				Testing harness for the comment model
+	test/fixtures/comments.yml				Sample comments for use in testing
+	
+	
+	-> db/schema.rb
+	
+		class CreateComments < ActiveRecord::Migration[7.0]
+		  def change
+		    create_table :comments do |t|
+		      t.string :commenter
+		      t.text :body
+		      t.references :article, null: false, foreign_key: true   #making foreign key of article model in Comment model.
+
+		      t.timestamps
+		    end
+		  end
+		end
+
+	-> rails db:migrate
+	
+	beryl@beryl-HP-Pavilion-Notebook:~/Desktop/Training/Rails/Projects/blog$ rails db:migrate
+	== 20230320131809 CreateComments: migrating ===================================
+	-- create_table(:comments)
+	   -> 0.0466s
+	== 20230320131809 CreateComments: migrated (0.0467s) ==========================
+
+ b). Associating Models:-
+ 
+ -> Active Record associations let you easily declare the relationship between two models.
+ 
+ -> for article and comments:-
+ 	Each comment belongs to one article.
+	One article can have many comments.
+	
+	1). associate comment with one article. (app/models/comment.rb)
+	
+		class Comment < ApplicationRecord     # already present  
+		  belongs_to :article
+		end
+
+	2). associate article with many comment. (app/models/article.rb)
+	
+		class Article < ApplicationRecord
+		  has_many :comments                  # article can have many comments.
+
+		  validates :title, presence: true
+		  validates :body, presence: true, length: { minimum: 10 }
+		end
+
+ c). Adding a route for comments:-
+ 	-> config/routes.rb
+ 	
+ 	:-      Rails.application.routes.draw do
+		  root "articles#index"
+
+		  resources :articles do      #adding a route so that Rails knows where we would like to navigate to see comments.
+		    resources :comments
+		  end
+		end
+		
+ d). Generating a Controller:-
+ 
+ 	:- rails g controller Comments
+ 	
+ 	-> After above command , some files are created.
+ 	
+ 	File/Directory						Purpose
+ 	
+	app/controllers/comments_controller.rb		The Comments controller
+	app/views/comments/					Views of the controller are stored here
+	test/controllers/comments_controller_test.rb		The test for the controller
+	app/helpers/comments_helper.rb			A view helper file
+ 	
+ 	
+ 	-> to let us make a new comment:
+ 		--App/views/articles/show.html.erb
+ 		
+ 		:-    <h2>Add a comment:</h2>
+			<%= form_with model: [ @article, @article.comments.build ] do |form| %>
+			  <p>
+			    <%= form.label :commenter %><br>
+			    <%= form.text_field :commenter %>
+			  </p>
+			  <p>
+			    <%= form.label :body %><br>
+			    <%= form.text_area :body %>
+			  </p>
+			  <p>
+			    <%= form.submit %>
+			  </p>
+			<% end %>
+ 		
+ 	-> Let's wire up the create in app/controllers/comments_controller.rb:
+
+		:-     class CommentsController < ApplicationController
+			  def create
+			    @article = Article.find(params[:article_id])
+			    @comment = @article.comments.create(comment_params)
+			    redirect_to article_path(@article)
+			  end
+
+			  private
+			  def comment_params
+			    params.require(:comment).permit(:commenter, :body)
+			  end
+			end
+			
+	-> Once we have made the new comment, we send the user back to the original article using the article_path(@article) helper.
+	  As we have already seen, this calls the show action of the ArticlesController which in turn renders the show.html.erb template. 	 This is where we want the comment to show, so let's add that to the app/views/articles/show.html.erb.
+	  
+	  	:-	<h2>Comments</h2>
+			<% @article.comments.each do |comment| %>
+			  <p>
+			    <strong>Commenter:</strong>
+			    <%= comment.commenter %>
+			  </p>
+
+			  <p>
+			    <strong>comments:</strong>
+			    <%= comments.body %>
+			  <p>
+			<% end %>
+
+
+ -------------------------------------------------------------- Refactoring ---------------------------------------------------------
+ 
+ 1). Rendering partial collections:-
+ 
+ -> make a comment partial to extract showing all the comments for the article. Create the file app/views/comments/_comment.html.erb 
+ 	
+ 	:-      <p>
+		  <strong>Commenter:</strong>
+		  <%= comment.commenter %>
+		</p>
+
+		<p>
+		  <strong>Comment:</strong>
+		  <%= comment.body %>
+		</p>
+		
+ -> now replace comments content in show.html.erb with partial.
+ 
+ 	:-	<h2>Comments</h2>
+		<%= render @article.comments %>
+
+	
+ 2). Rendering a partial form:-     
+    
+    -> Let us also move that new comment section out to its own partial. Again, you create a file app/views/comments/_form.html.erb
+ 
+ 	:-      <%= form_with model: [ @article, @article.comments.build ] do |form| %>
+		  <p>
+		    <%= form.label :commenter %><br>
+		    <%= form.text_field :commenter %>
+		  </p>
+		  <p>
+		    <%= form.label :body %><br>
+		    <%= form.text_area :body %>
+		  </p>
+		  <p>
+		    <%= form.submit %>
+		  </p>
+		<% end %>
+
+    -> Now change content of "Add a comment" in show.html.erb
+    
+    	:-	<h2>Add a comment:</h2>
+		<%= render 'comments/form' %>
+		
+		
+ 3). Using Concerns :-
+ 
+ -> concerns are modules that can be included in multiple classes to share common functionality. 
+ -> Concerns are a way to extract common methods and behavior into a reusable module. 
+ -> They allow you to encapsulate code in a way that makes it easy to reuse and maintain.
+ 
+ -> Comments may be hidden or visible. This could be represented using a status column in each model.
+ -> run the following migrations to add status to Articles and Comments:
+ 
+ 	:- rails generate migration AddStatusToArticles status:string
+	   rails generate migration AddStatusToComments status:string
+
+	:- update the database with the generated migrations:
+		-> rails db:migrate
+		
+ -> We also have to permit the :status key as part of the strong parameter, in app/controllers/articles_controller.rb
+ 
+ 	:-  private
+	    def article_params
+	      params.require(:article).permit(:title, :body, :status)
+	    end
+	    
+	:-  private
+	    def comment_params
+	      params.require(:comment).permit(:commenter, :body, :status)
+	    end
+
+--------------------------------------------------------------------------------------------------------------------------------------
+							Deleting Comments
+							
+ -> Another important feature of a blog is being able to delete spam comments. 
+ -> To do this, we need to implement a link of some sort in the view and a destroy action in the CommentsController.
+
+ -> add the delete link in the app/views/comments/_comment.html.erb partial.
+ 	
+ 	:-        <p>
+		    <%= link_to "Destroy Comment", [comment.article, comment], data: {
+				  turbo_method: :delete,
+				  turbo_confirm: "Are you sure?"
+				} %>
+		  </p>
+		  
+ -> add a destroy action to our controller (app/controllers/comments_controller.rb):	
+ 
+ 	:-	  def destroy
+		    @article = Article.find(params[:article_id])
+		    @comment = @article.comments.find(params[:id])
+		    @comment.destroy
+		    redirect_to article_path(@article), status: :see_other
+		  end
+
+ -> Deleting Associated Objects
+   	--> If you delete an article, its associated comments will also need to be deleted.
+   	
+   	:- has_many :comments, dependent: :destroy
+   	
+--------------------------------------------------------------------------------------------------------------------------------------
+								Security
+								
+ 1). Basic Authentication:-
+ -> use the Rails http_basic_authenticate_with method, which allows access to the requested action if that method allows it.
+ -> To use the authentication system, we specify it at the top of our ArticlesController in app/controllers/articles_controller.rb. 
+    In our case, we want the user to be authenticated on every action except index and show.
+    
+    	:-   http_basic_authenticate_with name: "dhh", password: "secret", except: [:index, :show]
+    	
+ -> We also want to allow only authenticated users to delete comments, 
+    so in the CommentsController (app/controllers/comments_controller.rb)
+    
+    	:-   http_basic_authenticate_with name: "dhh", password: "secret", only: :destroy
+    
+ 
+ 
+

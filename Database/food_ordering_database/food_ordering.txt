@@ -1,0 +1,604 @@
+----------------------------------------------------------food ordering-----------------------------------------------------------------
+
+ 1). Database creation :-
+ 	 CREATE DATABASE food_ordering
+ 	 
+ 2). menu_items table created :-
+ 
+ 	 CREATE TABLE menu_items (
+	  id BIGSERIAL PRIMARY KEY,
+	  restaurant_id integer,
+	  menu_category_id integer,
+	  name varchar(50),
+	  price integer,
+	  Description varchar(100),
+	  veg boolean
+	);
+	
+ 3). customers table creation :- 
+ 
+ 	CREATE TABLE customers (
+	  id BIGSERIAL PRIMARY KEY,
+	  First_name varchar(20),
+	  Last_name varchar(20),
+	  Email varchar(100),
+	  Phone varchar,
+	  Username varchar(50),
+	  Password varchar(50),
+	  Address_id integer,
+	  dob Date,
+	  Created_at timestamptz,
+	  gender varchar
+	);
+	
+ 4). orders table creation :-
+ 
+ 	CREATE TABLE orders (
+	  id BIGSERIAL PRIMARY KEY,
+	  Customer_id integer,
+	  restaurant_id integer,
+	  customer_address_id integer,
+	  amount integer,
+	  Created_at timestamp,
+	  status_id integer,
+	  rider_id integer
+	);
+	
+ 5). order_details table creation :-
+ 
+ 	CREATE TABLE order_details (
+	  id BIGSERIAL PRIMARY KEY,
+	  Order_id integer,
+	  menu_item_id integer,
+	  quantity integer,
+	  item_price integer,
+	  total_price integer
+	);
+	
+ 6). payments table creation :-
+ 
+ 	CREATE TABLE payments (
+	  id BIGSERIAL PRIMARY KEY,
+	  Order_id integer,
+	  date Date
+	);
+	
+ 7). ratings table creation :-
+ 
+ 	CREATE TYPE score AS ENUM (          #user define data type for scale attribute
+	  '1',
+	  '2',
+	  '3',
+	  '4',
+	  '5'
+	);
+	
+	
+	CREATE TABLE ratings (               #rating table 
+	  id BIGSERIAL PRIMARY KEY,
+	  Scale score,
+	  comment varchar(200),
+	  rating_for_id integer,
+	  date Date,
+	  Customer_id integer
+	);
+
+ 8). cart_items table creation :-
+ 
+ 	CREATE TABLE cart_items (
+	  id BIGSERIAL PRIMARY KEY,
+	  Customer_id integer,
+	  menu_item_id integer,
+	  Created_at Date,
+	  Updated_at Date
+	);
+	
+ 9). checkout_details table creation :-
+ 
+ 	CREATE TABLE checkout_details (
+	  id BIGSERIAL PRIMARY KEY,
+	  Order_id integer,
+	  Check_at date,
+	  customer_address_id integer,
+	  Delivery_charge integer
+	);
+	
+ 10). status table creation :-
+ 
+	 CREATE TABLE status (
+	  id BIGSERIAL PRIMARY KEY,
+	  name varchar
+	);
+		
+ 11). restaurants table creation :-
+ 
+ 	CREATE TABLE restaurants (
+	  id BIGSERIAL PRIMARY KEY,
+	  name varchar(50),
+	  veg boolean,
+	  restaurant_categories_id integer,
+	  address varchar(100),
+	  contact_person varchar,
+	  contact_person_number varchar,
+	  open_time timestamp,
+	  close_time timestamp,
+	  rating_for_id integer
+	);
+	
+ 12). menu_categories table creation :-
+ 
+ 	CREATE TABLE menu_categories (
+	  id integer PRIMARY KEY,
+	  name varchar(100)
+	);
+	
+ 13). customer_address table creation :-
+ 
+ 	CREATE TABLE customer_address (
+	  id integer PRIMARY KEY,
+	  name varchar,
+	  house_no integer,
+	  street_no integer,
+	  locality varchar,
+	  city varchar,
+	  zip_code varchar,
+	  land_mark varchar
+	);
+	
+ 14). rating_for table creation :-
+ 
+ 	CREATE TABLE rating_for (
+	  id integer PRIMARY KEY,
+	  name varchar
+	);
+	
+ 15). riders table creation :-
+ 
+ 	CREATE TABLE riders (
+	  id integer PRIMARY KEY,
+	  name varchar,
+	  gender varchar,
+	  dob varchar,
+	  Aadhar_card_number varchar,
+	  Driving_license_number varchar,
+	  vehicle_id integer
+	);
+	
+ 16). vehicles table creation :-
+ 
+ 	CREATE TABLE vehicles (
+	  id integer PRIMARY KEY,
+	  name varchar,
+	  brand_name varchar,
+	  registration_number integer,
+	  purchase_date Date,
+	  RC varchar,
+	  insurance_certificate_number varchar,
+	  pollution_certificate_number varchar
+	);
+	
+ 17). restaurant_categories table creation :-
+ 
+ 	CREATE TABLE restaurant_categories (
+	  id integer PRIMARY KEY,
+	  name varchar
+	);
+	
+	
+ 18). Making foreign keys :-
+ 
+ 	a). ALTER TABLE "menu_items" ADD FOREIGN KEY ("menu_category_id") REFERENCES "menu_categories" ("id");
+ 	b). ALTER TABLE "orders" ADD FOREIGN KEY ("status_id") REFERENCES "status" ("id");
+	c). ALTER TABLE "order_details" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("id");
+	d). ALTER TABLE "payments" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("id");
+	e). ALTER TABLE "ratings" ADD FOREIGN KEY ("customer_id") REFERENCES "customers" ("id");
+	f). ALTER TABLE "cart_items" ADD FOREIGN KEY ("customer_id") REFERENCES "customers" ("id");
+	g). ALTER TABLE "cart_items" ADD FOREIGN KEY ("menu_item_id") REFERENCES "menu_items" ("id");
+	h). ALTER TABLE "checkout_details" ADD FOREIGN KEY ("order_id") REFERENCES "orders" ("id");
+	i). ALTER TABLE "checkout_details" ADD FOREIGN KEY ("customer_address_id") REFERENCES "customer_address" ("id");
+	j). ALTER TABLE "restaurants" ADD FOREIGN KEY ("rating_id") REFERENCES "ratings" ("id");
+	k). ALTER TABLE "riders" ADD FOREIGN KEY ("vehicle_id") REFERENCES "vehicles" ("id");
+	l). ALTER TABLE "orders" ADD FOREIGN KEY ("restaurant_id") REFERENCES "restaurants" ("id");
+	m). ALTER TABLE "orders" ADD FOREIGN KEY ("customer_address_id") REFERENCES "customer_address" ("id");
+	n). ALTER TABLE "orders" ADD FOREIGN KEY ("rider_id") REFERENCES "riders" ("id");
+	o). ALTER TABLE "order_details" ADD FOREIGN KEY ("menu_item_id") REFERENCES "menu_items" ("id");
+	p). ALTER TABLE "ratings" ADD FOREIGN KEY ("rating_for_id") REFERENCES "rating_for" ("id");
+	q). ALTER TABLE "restaurants" ADD FOREIGN KEY ("restaurant_categories_id") REFERENCES "restaurant_categories" ("id");
+	r). ALTER TABLE "customers" ADD FOREIGN KEY ("address_id") REFERENCES "customer_address" ("id");
+	s). ALTER TABLE "menu_items" ADD FOREIGN KEY ("restaurant_id") REFERENCES "restaurants" ("id");
+	t). ALTER TABLE "orders" ADD FOREIGN KEY ("customer_id") REFERENCES "customers" ("id");
+	
+	
+ ----------------------------------------------------------------------------------------------------------------------------------
+ 							insertion using csv files
+
+ 19). insertion in cart_items :-
+ 
+	 COPY cart_items(customer_id,menu_item_id,created_at,updated_at)
+	 FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/cart_items.csv' 
+	 DELIMITER ',' CSV HEADER;
+	
+	food_ordering=# select * from cart_items;
+	 id | customer_id | menu_item_id | created_at | updated_at 
+	----+-------------+--------------+------------+------------
+	  6 |           3 |            7 | 2023-02-02 | 2023-02-02
+	  7 |           8 |           12 | 2023-01-07 | 2023-01-08
+	  8 |          14 |           10 | 2022-12-17 | 2022-12-17
+	  9 |           9 |           17 | 2023-02-18 | 2023-02-18
+	 10 |           8 |           19 | 2023-01-28 | 2023-01-28
+	 
+ 20). insertion in customers :-
+ 
+ 	COPY customers(first_name,last_name,email,phone,username,password,address_id,dob,created_at,gender)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/customers.csv' 
+	DELIMITER ',' CSV HEADER ;
+	
+	select * from customers;
+	
+ id | first_name | last_name  |            email            |   phone    |   username   |   password   | address_id |    dob     |        created_at         | gender 
+----+------------+------------+-----------------------------+------------+--------------+--------------+------------+------------+---------------------------+--------
+  1 | Norah      | Bulluck    | nbulluck0@timesonline.co.uk | 4498136144 | nbulluck0    | m6R1ef       |          1 | 2002-02-05 | 2023-02-17 11:46:00+05:30 | Male
+  2 | Rad        | Ripsher    | rripsher1@cocolog-nifty.com | 7318203254 | rripsher1    | XaF6uX       |          3 | 2003-08-30 | 2023-01-05 14:05:00+05:30 | Male
+  3 | Lonnie     | Tarbard    | ltarbard2@weebly.com        | 2088202323 | ltarbard2    | fkGNrm       |          7 | 2012-10-30 | 2023-01-29 05:28:00+05:30 | Male
+  4 | Newton     | Beldom     | nbeldom3@tripod.com         | 9105924398 | nbeldom3     | MsAJdurqvqIz |          9 | 2018-10-10 | 2023-02-10 23:06:00+05:30 | Male
+  5 | Ethe       | Downing    | edowning4@fastcompany.com   | 5167204325 | edowning4    | XxLacF4      |          5 | 1993-03-03 | 2023-02-23 03:46:00+05:30 | Male
+  6 | Andrey     | Fryd       | afryd5@cmu.edu              | 7161592822 | afryd5       | 1lprxTZaq    |         15 | 2022-11-01 | 2023-01-15 19:14:00+05:30 | Female
+  7 | Ibrahim    | Dorrity    | idorrity6@tinyurl.com       | 9665654644 | idorrity6    | DanmL6g      |          2 | 2022-03-30 | 2022-10-28 14:43:00+05:30 | Male
+  8 | Berti      | Sherlock   | bsherlock7@weibo.com        | 8728756665 | bsherlock7   | obt2s6GPbxv  |          4 | 2013-01-09 | 2022-05-13 12:06:00+05:30 | Female
+  9 | Bendite    | Danis      | bdanis8@live.com            | 4922883725 | bdanis8      | UIWjfEN      |          6 | 2009-02-22 | 2022-07-09 02:32:00+05:30 | Male
+ 10 | Alyse      | Mapplebeck | amapplebeck9@sakura.ne.jp   | 7402722084 | amapplebeck9 | OwKrBNveZ    |         10 | 2014-08-16 | 2022-05-25 05:49:00+05:30 | Female
+ 11 | Muriel     | Kibbel     | mkibbela@indiegogo.com      | 9358185298 | mkibbela     | rRIkLR       |         11 | 2017-09-25 | 2022-11-21 05:57:00+05:30 | Female
+ 12 | Lonna      | Premble    | lprembleb@salon.com         | 8484292339 | lprembleb    | fDKbZZ       |          8 | 2005-03-23 | 2023-01-18 22:00:00+05:30 | Female
+ 13 | Marlo      | Scrymgeour | mscrymgeourc@csmonitor.com  | 1176070248 | mscrymgeourc | 6waWNAwz     |         13 | 2011-10-30 | 2022-07-16 19:58:00+05:30 | Male
+ 14 | Ashly      | Hiley      | ahileye@biglobe.ne.jp       | 8836875761 | ahileye      | 1m03cP9Z     |         12 | 1990-03-14 | 2022-12-06 05:59:00+05:30 | Male
+ 15 | Gilberta   | Coxhead    | gcoxheadd@mapy.cz           | 3127590453 | gcoxheadd    | b4EQLkNTfLF  |         14 | 2000-07-25 | 2023-02-03 01:03:00+05:30 | Female
+
+ 
+ 21). insertion in checkout_details table :-
+ 
+ 	COPY checkout_details(order_id,check_at,customer_address_id,delivery_charge)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/checkout_details.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	select * from checkout_details;
+	 id | order_id |  check_at  | customer_address_id | delivery_charge 
+	----+----------+------------+---------------------+-----------------
+	  1 |        2 | 2023-02-10 |                   5 |              40
+	  2 |        9 | 2023-01-09 |                  10 |              20
+	  3 |        3 | 2023-01-22 |                  13 |              20
+	  4 |       10 | 2022-08-08 |                   1 |              60
+	  5 |       12 | 2022-09-22 |                  11 |              40
+
+ 22). insertion in menu_categories :-
+ 
+ 	COPY menu_categories(id,name)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/menu_categories.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	select * from menu_categories ;
+	 id |   name    
+	----+-----------
+	  1 | chinese
+	  2 | french
+	  3 | japanese
+	  4 | indian
+	  5 | italian
+	  6 | spanish
+	  7 | thai
+	  8 | mexicon
+	  9 | american
+	 10 | turkish
+	 11 | breakfast
+	 12 | lunch
+	 13 | dinner
+
+ 23). insertion in menu_items :-
+ 
+ 	COPY menu_items(restaurant_id,menu_category_id,name,price,description,veg)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/menu_items.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	food_ordering=# select * from menu_items;
+	
+ id | restaurant_id | menu_category_id |          name           | price |                                description                                | veg 
+----+---------------+------------------+-------------------------+-------+---------------------------------------------------------------------------+-----
+  1 |             3 |                5 | pizza                   |   230 | 1 medium , paneer and onion                                               | t
+  2 |             1 |               11 | Sandwish                |   120 | 2 pic , Corn and spinach whole wheat                                      | t
+  3 |             7 |                4 | Biryani                 |   450 | 1 kg, Mutton hyderabadi Dum biryani                                       | f
+  4 |             9 |                4 | Dal makhani             |   140 | 1 plate , Urad dal and rajma                                              | t
+  5 |             4 |                9 | Crispy veg burger       |    70 | Crispy veg patty burger                                                   | t
+  6 |            10 |                4 | 2-Aloo pyaaz paratha    |   242 | Served with curd                                                          | t
+  7 |             5 |                4 | Tandoori chicken        |   249 | 1/2 kg ,Tandori marinated & spiced                                        | f
+  8 |             1 |                4 | Paneer paratha          |    90 | 2 pic                                                                     | t
+  9 |             6 |                2 | Veg grilled sandwich    |   100 | 2 pic with cheese                                                         | t
+ 10 |            10 |                4 | Veg Thali               |   350 | shahi paneer,Dal makhani,Mix Veg,Rice,Raita,Butter roti,Gulab jamun,Onion | t
+ 11 |             2 |                6 | Grilled chicken Breast  |   550 | 146g protein,18g fat,2g fiber                                             | f
+ 12 |             8 |                4 | Royal biryani           |   685 | 1 kg , slow cooked with tandoori spiced prawn                             | f
+ 13 |             2 |                7 | Lemon grill chicken     |   224 | 200g chicken breast                                                       | f
+ 14 |             9 |                4 | Achari paneer tikka     |   315 | 10 pic of paneer with green sauce                                         | t
+ 15 |             7 |                4 | Murgh Malai seekh       |   660 | Creamy kebabs made with spiced chicken keema                              | f
+ 16 |             8 |                4 | Falooda                 |   137 | 15g , with Ice-cream                                                      | t
+ 17 |             3 |                5 | Chicken pepperoni pizza |   850 | 1 medium, classic italian                                                 | f
+ 18 |             4 |               12 | Veg whopper             |   169 | Signature veg patty whopper                                               | t
+ 19 |             6 |                8 | Grilled Burger          |    85 | Mouth watering taste                                                      | t
+ 20 |             5 |                9 | Butter Chicken Rara     |   425 | full plate ,Butter chicken with minced butter chicken gravy               | f
+
+
+ 24). insertion the vehicles :-
+ 
+ 	COPY vehicles(id,name,brand_name,registration_number,purchase_date,rc,insurance_certificate_number,pollution_certificate_number)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/vehicles.csv' 
+	DELIMITER ',' CSV HEADER ;
+	
+	food_ordering=# select * from vehicles ;
+	
+ id |          name          |   brand_name    | registration_number | purchase_date |     rc     | insurance_certificate_number | pollution_certificate_number 
+----+------------------------+-----------------+---------------------+---------------+------------+------------------------------+------------------------------
+  1 | Honda Shine            | Honda           | KA02AB1234          | 2020-01-01    | ABC1234567 | XYZ9876543                   | PQR4567890
+  2 | Yamaha FZ              | Yamaha          | KA05CD5678          | 2019-05-15    | DEF2345678 | ABC8765432                   | STU5678901
+  3 | Bajaj Pulsar           | Bajaj           | KA03EF9012          | 2021-09-30    | GHI3456789 | JKL7654321                   | VWX6789012
+  4 | KTM Duke               | KTM             | KA09GH3456          | 2018-11-21    | MNO4567891 | DEF7654321                   | TUV1234567
+  5 | TVS Apache             | TVS             | KA01IJ7890          | 2022-02-10    | PQR5678901 | GHI2345678                   | ABC7890123
+  6 | Suzuki Gixxer          | Suzuki          | KA08KL2345          | 2017-06-12    | STU6789012 | MNO3456789                   | DEF9012345
+  7 | Hero Splendor          | Hero            | KA04MN6789          | 2019-03-24    | ABC2345678 | XYZ4567890                   | GHI5678901
+  8 | Royal Enfield Classic  | Royal Enfield   | KA12OP9012          | 2020-08-17    | DEF3456789 | PQR9012345                   | JKL6789012
+  9 | Kawasaki Ninja         | Kawasaki        | KA11QR5678          | 2022-01-08    | XYZ7890123 | STU1234567                   | ABC2345678
+ 10 | Harley Davidson Street | Harley Davidson | KA07ST1234          | 2018-05-19    | JKL8901234 | VWX4567890                   | TUV7890123
+
+
+ 25). insertion in riders :-
+ 
+ 	COPY riders(id,name,gender,dob,aadhar_card_number,driving_license_number,vehicle_id)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/riders.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	food_ordering=# select * from riders;
+	
+	 id |    name     | gender |    dob     | aadhar_card_number | driving_license_number | vehicle_id 
+	----+-------------+--------+------------+--------------------+------------------------+------------
+	  1 | John Smith  | Male   | 1985-02-15 | 1234-5678-9012     | DL-1234567890          |          5
+	  2 | Jane Doe    | Female | 1992-07-30 | 2345-6789-0123     | DL-2345678901          |          8
+	  3 | David Lee   | Male   | 1989-05-22 | 3456-7890-1234     | DL-3456789012          |          1
+	  4 | Sarah Kim   | Female | 1998-11-12 | 4567-8901-2345     | DL-4567890123          |          9
+	  5 | Michael Tan | Male   | 1994-04-05 | 5678-9012-3456     | DL-5678901234          |          2
+	  6 | Rachel Wong | Female | 1996-08-23 | 6789-0123-4567     | DL-6789012345          |          6
+	  7 | Daniel Chen | Male   | 1990-12-01 | 7890-1234-5678     | DL-7890123456          |          3
+	  8 | Lisa Zhang  | Female | 1988-09-14 | 8901-2345-6789     | DL-8901234567          |          7
+	  9 | Jack Lee    | Male   | 1993-03-27 | 9012-3456-7890     | DL-9012345678          |         10
+	 10 | Emily Kim   | Female | 1991-06-07 | 0123-4567-8901     | DL-0123456789          |          4
+
+ 
+ 26). insertion in order_details :-
+ 
+ 	COPY order_details(order_id,menu_item_id,quantity,item_price,total_price)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/order_details.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	food_ordering=# select * from order_details;
+	
+	 id | order_id | menu_item_id | quantity | item_price | total_price 
+	----+----------+--------------+----------+------------+-------------
+	  1 |        1 |           19 |        2 |         85 |         170
+	  2 |        2 |           11 |        5 |        550 |        2750
+	  3 |        5 |           12 |        3 |        685 |        2055
+	  4 |        4 |            7 |        1 |        249 |         249
+	  5 |        7 |            8 |        2 |         90 |         180
+	  6 |       12 |            4 |        4 |        140 |         560
+	  7 |        9 |            8 |       10 |         90 |         900
+	  8 |        3 |            2 |        3 |        120 |         360
+	  9 |       10 |            7 |        4 |        249 |         996
+	 10 |        8 |            3 |        1 |        450 |         450
+
+ 
+ 27). insertion in status :-
+ 
+ 	COPY status(name)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/order_status.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	food_ordering=# select * from status;
+	
+	 id |    name    
+	----+------------
+	  1 | Approved
+	  2 | pending
+	  3 | cancelled
+	  4 | delivered
+	  5 | on the way
+
+ 28). insertion in restaurant_categories :-
+ 
+ 	COPY restaurant_categories(id,name)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/rest_cat.csv' 
+	DELIMITER ',' CSV HEADER ;
+	
+	food_ordering=# select * from restaurant_categories ;
+	
+	 id |     name      
+	----+---------------
+	  1 | Italian
+	  2 | Chinese
+	  3 | Mexican
+	  4 | American
+	  5 | Indian
+	  6 | Mediterranean
+	  7 | Thai
+	  8 | French
+	  9 | Vegetarian
+	 10 | Seafood
+
+ 29). insertion into customer_address :-
+ 
+ 	COPY customer_address(id,name,house_no,street_no,locality,city,zip_code,land_mark)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/customer_address.csv' 
+	DELIMITER ',' CSV HEADER ;
+	
+	food_ordering=# select * from customer_address ;
+	
+	 id | house_no | street_no |   locality   |    city    | zip_code |   land_mark    |    name     
+	----+----------+-----------+--------------+------------+----------+----------------+-------------
+	  1 |       23 |        15 | Rose Gardens | Chandigarh | 160047   | Near Rock Park | home
+	  2 |       65 |         8 | Model Town   | Delhi      | 110009   | Near Metro     | work
+	  3 |       78 |        22 | Rajouri      | Delhi      | 110027   | Near Market    | second_home
+	  4 |       12 |         5 | Sector 14    | Gurugram   | 122001   | Near Hospital  | home
+	  5 |       39 |        11 | Sushant Lok  | Gurugram   | 122002   | Near Mall      | other
+	  6 |       42 |         9 | Sector 15    | Faridabad  | 121007   | Near School    | home
+	  7 |       11 |         3 | Sector 16    | Faridabad  | 121002   | Near Market    | work
+	  8 |       10 |       123 | MG Road      | New Delhi  | 110001   | India Gate     | home
+	  9 |       20 |       456 | Koramangala  | Bangalore  | 560034   | Forum Mall     | work
+	 10 |       30 |       789 | Bandra       | Mumbai     | 400050   | Bandstand      | second_home
+	 11 |       40 |       987 | Begumpet     | Hyderabad  | 500016   | NTR Gardens    | other
+	 12 |       50 |       111 | Civil Lines  | Allahabad  | 211001   | Triveni Sangam | home
+	 13 |       60 |       222 | Gomti        | Lucknow    | 226010   | Ambedkar Park  | work
+	 14 |       70 |       333 | Adajan       | Surat      | 395009   | Dumas Beach    | second_home
+	 15 |       80 |       444 | T.Nagar      | Chennai    | 600017   | Marina Beach   | other
+
+ 
+ 30). insertion into ratings :-
+ 
+ 	COPY ratings(scale,comment,rating_for_id,date,customer_id)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/ratings.csv' 
+	DELIMITER ',' CSV HEADER ;
+
+	food_ordering=# select * from ratings;
+	
+	 id | scale |      comment      | rating_for_id |    date    | customer_id 
+	----+-------+-------------------+---------------+------------+-------------
+	  1 | 4     | amazing pizza     |             2 | 2020-10-07 |           2
+	  2 | 3     | average sandwich  |             2 | 2021-01-21 |           7
+	  3 | 5     | best biryani ever |             2 | 2022-02-07 |           9
+	  4 | 5     | Awesome one       |             2 | 2022-01-12 |          10
+	  5 | 2     | Not satisfying    |             2 | 2021-09-17 |           5
+	  6 | 4     | nice location     |             1 | 2022-03-25 |          15
+	  7 | 5     | very tasty        |             2 | 2023-11-11 |           1
+	  8 | 4     | good behaviour    |             1 | 2022-11-24 |           1
+
+ 
+ 31). insertion in restaurants :-
+ 
+ 	COPY restaurants(name,veg,restaurant_categories_id,address,contact_person,contact_person_number,open_time,close_time,rating_id)
+	FROM '/home/beryl/Desktop/demo/something/food_ordering_tables/restaurants.csv' 
+	DELIMITER ',' CSV HEADER ;
+	
+	select * from restaurants;
+ id |        name        | veg | restaurant_categories_id |   address    | contact_person | contact_person_number | open_time | close_time | rating_id 
+----+--------------------+-----+--------------------------+--------------+----------------+-----------------------+-----------+------------+-----------
+  1 | The Breakfast club | t   |                        9 | neelam chowk | Ravi Verma     | 9876543210            | 09:00:00  | 12:00:00   |         6
+  2 | Happy Grillmore    | t   |                        3 | faridabad    | Priya Singh    | 9988776655            | 17:00:00  | 23:00:00   |          
+  3 | Dominos            | f   |                        4 | bata chowk   | Arjun Gupta    | 9876543211            | 10:00:00  | 23:00:00   |         6
+  4 | Burger-king        | f   |                        4 | bata chowk   | Pooja Sharma   | 9567891234            | 10:00:00  | 23:00:00   |         8
+  5 | The Maharaja club  | f   |                        5 | badarpur     | Rohit Mehra    | 9876543212            | 11:00:00  | 22:00:00   |         8
+  6 | The Indian Grill   | t   |                        5 | badarpur     | Kavita Mishra  | 9555555555            | 11:00:00  | 22:00:00   |          
+  7 | Mughlai Darbar     | f   |                        5 | delhi        | Naveen Singh   | 9876543213            | 10:00:00  | 21:00:00   |         6
+  8 | Shahi Darbar       | f   |                        5 | delhi        | Anjali Yadav   | 9712345678            | 09:00:00  | 22:00:00   |         8
+  9 | Curry Kingdom      | t   |                        5 | faridabad    | Rahul Jain     | 9898765432            | 10:00:00  | 22:00:00   |          
+ 10 | Dilli ki Rasoi     | t   |                        5 | delhi        | Megha Khanna   | 9912345678            | 11:30:00  | 23:00:00   |          
+
+ 
+ 32). insertion in orders :-
+ 
+ 	copy orders(customer_id,restaurant_id,customer_address_id,amount,created_at,status_id,rider_id) from
+	'/home/beryl/Desktop/demo/something/food_ordering_tables/orders.csv' DELIMITER ',' CSV HEADER ;
+
+	select * from orders;
+	 id | customer_id | restaurant_id | customer_address_id | amount |     created_at      | status_id | rider_id 
+	----+-------------+---------------+---------------------+--------+---------------------+-----------+----------
+	  1 |           2 |             6 |                   1 |    170 | 2023-02-08 17:10:00 |         1 |        2
+	  2 |           5 |             2 |                   3 |   2750 | 2023-02-10 14:23:00 |         4 |        5
+	  3 |          13 |             8 |                   2 |   2055 | 2023-01-22 10:13:00 |         3 |         
+	  4 |           9 |             5 |                   7 |    249 | 2022-07-21 12:19:00 |         5 |        7
+	  5 |           2 |             1 |                   4 |    180 | 2023-01-17 15:03:00 |         1 |        9
+	  6 |          15 |             9 |                   6 |    560 | 2022-11-19 17:43:00 |         5 |        4
+	  7 |          13 |             1 |                   5 |    900 | 2022-03-28 11:24:00 |         3 |         
+	  8 |           3 |             1 |                   2 |    360 | 2023-01-22 12:10:00 |         4 |        3
+	  9 |          10 |             5 |                   5 |    996 | 2023-01-09 11:51:00 |         2 |         
+	 10 |           1 |             7 |                   1 |    450 | 2022-08-08 20:08:00 |         4 |        1
+
+ 
+ 33). insertion in payments :-
+ 
+ 	copy payments(order_id,date) from
+	'/home/beryl/Desktop/demo/something/food_ordering_tables/payments.csv' DELIMITER ',' CSV HEADER ;
+
+	food_ordering=# select * from payments;
+	
+	 id | order_id |    date    
+	----+----------+------------
+	  1 |        2 | 2023-02-10
+	  2 |        8 | 2023-01-22
+	  3 |       10 | 2022-09-22
+	  4 |        1 | 2023-02-08
+	  5 |        4 | 2022-07-21
+	  6 |        5 | 2023-01-17
+	  7 |        6 | 2022-11-19
+
+ 34). using index in checkout_details table for order_id :-
+ 
+ 	----:::::  CREATE INDEX idx_checkout_order_id ON checkout_details(order_id);
+
+	\d checkout_details
+	
+		                           Table "public.checkout_details"
+	       Column        |  Type   | Collation | Nullable |                   Default                    
+	---------------------+---------+-----------+----------+----------------------------------------------
+	 id                  | bigint  |           | not null | nextval('checkout_details_id_seq'::regclass)
+	 order_id            | integer |           |          | 
+	 check_at            | date    |           |          | 
+	 customer_address_id | integer |           |          | 
+	 delivery_charge     | integer |           |          | 
+	Indexes:
+	    "checkout_details_pkey" PRIMARY KEY, btree (id)
+	    "idx_checkout_order_id" btree (order_id)             #####index created here
+	Foreign-key constraints:
+	    "checkout_details_customer_address_id_fkey" FOREIGN KEY (customer_address_id) REFERENCES customer_address(id)
+	    "checkout_details_order_id_fkey" FOREIGN KEY (order_id) REFERENCES orders(id)
+
+ 35). index creation in order_details table :-
+ 
+ 	-------:::::: CREATE INDEX idx_order_details_order_id ON order_details(order_id);
+ 	-------:::::: CREATE INDEX idx_order_details_menu_item_id ON order_details(menu_item_id);
+
+	\d order_details
+	
+		                       Table "public.order_details"
+	    Column    |  Type   | Collation | Nullable |                  Default                  
+	--------------+---------+-----------+----------+-------------------------------------------
+	 id           | bigint  |           | not null | nextval('order_details_id_seq'::regclass)
+	 order_id     | integer |           |          | 
+	 menu_item_id | integer |           |          | 
+	 quantity     | integer |           |          | 
+	 item_price   | integer |           |          | 
+	 total_price  | integer |           |          | 
+	Indexes:
+	    "order_details_pkey" PRIMARY KEY, btree (id)
+	    "idx_order_details_menu_item_id" btree (menu_item_id)    #### index created on menu_item_id
+	    "idx_order_details_order_id" btree (order_id)		#### index created on order_id
+	Foreign-key constraints:
+	    "order_details_menu_item_id_fkey" FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
+	    "order_details_order_id_fkey" FOREIGN KEY (order_id) REFERENCES orders(id)
+
+
+ --------------------------------------------------------------- QUERIES ------------------------------------------------------------
+ 
+ 1). print the restaurant (name,veg,rating,comment) , items(id,price,description) where item range between 3 to 17 and restaurants location is bata chowk.
+ 
+	sol :- select rest.name,rest.veg,rat.scale,rat.comment,mi.id,mi.price,mi.description from restaurants as rest inner join
+		menu_items as mi on mi.restaurant_id = rest.id inner join ratings as rat on rest.rating_id = rat.id
+		where mi.id between 3 and 17 and rest.address = 'bata chowk';
+		
+		    name     | veg | scale |    comment     | id | price |        description        
+		-------------+-----+-------+----------------+----+-------+---------------------------
+		 Dominos     | f   | 4     | nice location  | 17 |   850 | 1 medium, classic italian
+		 Burger-king | f   | 4     | good behaviour |  5 |    70 | Crispy veg patty burger
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+	

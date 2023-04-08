@@ -1,0 +1,272 @@
+------------------------------------------------------------- Validation ------------------------------------------------------------
+
+-> Validations are used to ensure that only valid data is saved into your database.
+-> Model-level validations are the best way to ensure that only valid data is saved into your database. 
+
+ 1). first and simple validation :- checking for presence of attribute field.
+ 
+ 	:-      class FormDetail < ApplicationRecord
+		  validates :name, presence: true
+		  validates :gender, presence: true
+		  validates :age, presence: true
+		  validates :address, presence: true
+		end
+		
+-----------------------------------------------------------------------------------------------------------------------------
+
+ :- methods trigger validations, and will save the object to the database only if the object is valid:
+	-> create,create!,save,save!,update,update!
+	
+	NOTE :- The bang versions (e.g. save!) raise an exception if the record is invalid. 
+		The non-bang versions don't: save and update return false, and create returns the object.
+
+ :- Skipping Validations :
+	-> The following methods skip validations, and will save the object to the database regardless of its validity. 
+	
+	decrement! , decrement_counter
+	increment! , increment_counter
+	insert , insert!
+	insert_all , insert_all!
+	toggle!
+	touch , touch_all
+	update_all , update_attribute
+	update_column , update_columns
+	update_counters
+	upsert , upsert_all
+	
+	Note :- save also has the ability to skip validations if passed validate:false as an argument. 
+		-> save(validate: false)
+		
+ -> To full error message 
+ 	:- p.errors.objects.first.full_message
+ 	
+ ------------------------------------------------------------------------------------------------------------------------------------
+ 								    errors[]
+ 									
+ -> To verify whether or not a particular attribute of an object is valid, you can use errors[:attribute]. 
+ -> It returns an array of all the error messages for :attribute. 
+ -> If there are no errors on the specified attribute, an empty array is returned.
+ 	syntax :- .errors[:attribute_name].any?    
+ 	
+ ------------------------------------------------------------------------------------------------------------------------------------
+ 								Validation Helpers 
+ 								
+ -> Accept the :on and :message options, 
+ -> which define when the validation should be run and what message should be added to the errors collection if it fails, respectively. 
+ -> The :on option takes one of the values :create or :update. There is a default error message for each one of the validation helpers.
+ -> These messages are used when the :message option isn't specified.
+ 
+  1). acceptance
+  -> This method validates that a checkbox on the user interface was checked when a form was submitted.
+  
+  	1st way :- validates :terms_and_conditions, acceptance: true
+  	2nd way :- validates :terms_and_conditions, acceptance: { message: 'must be accepted' }
+  	3rd way :- validates :eula, acceptance: { accept: ['TRUE', 'accepted'] }  #used when we want to specify the word should be entered.
+ 	
+  2). confirmation
+  -> You should use this helper when you have two text fields that should receive exactly the same content.
+  
+  	1st way :- validates :email, confirmation: true, presence: true
+  		   validates :email_confirmation, presence: true                #email_confirmation must be present.
+  		   
+  	2nd way :- There is also a :case_sensitive option that you can use to define whether the confirmation constraint will be case sensitive or not. This option defaults to true.
+
+		 --->>> validates :email, confirmation: { case_sensitive: false }
+ 	
+  3). comparison
+  -> This check will validate a comparison between any two comparable values. The validator requires a compare option be supplied.
+  
+  	syntax :- validates :start_date, comparison: { greater_than: :end_date }
+  	
+  -> These options are all supported:
+	:greater_than ,:greater_than_or_equal_to ,:equal_to ,:less_than ,:less_than_or_equal_to ,:other_than.
+	
+  4). exclusion
+  -> This helper validates that the attributes' values are not included in a given set.
+  
+  	eg:- validates :address, presence: true, exclusion: { in: %w(delhi up mp),message: "%{value} is invalid ." }
+  	
+	explanation :- The exclusion helper has an option :in that receives the set of values 
+		       that will not be accepted for the validated attributes. 
+		       The :in option has an alias called :within that you can use for the same purpose, if you'd like to. 
+		       This example uses the :message option to show how you can include the attribute's value.
+		       
+  5). format
+  -> This helper validates the attributes' values by testing whether they match a given regular expression, 
+     which is specified using the :with option.
+     
+     eg:- validates :name, presence: true, format: { with: /\A[a-zA-Z]+\z/,message: "only allows letters" }
+     
+     NOTE :- Alternatively, you can use attribute does not match the regular expression by using the :without option.
+     
+  6). inclusion
+  -> This helper validates that the attributes' values are included in a given set.
+  	
+  	eg:- validates :identity, inclusion: { in: %w(aadhar_card pan_card driving_license),message: "%{value} is invalid"}
+  	
+  7). length
+  -> This helper validates the length of the attributes' values.
+  
+  	eg:- validates :form_id, comparison: { greater_than_or_equal_to: 1000 }, presence:true , length: { minimum: 4, maximum:5 }
+  	
+  	:- possible length constraint options are:
+		-> minimum ,:maximum 
+		-> :in (or :within) - The value for this option must be a range.  (length: { in: 6..20 })
+		-> :is - The attribute length must be equal to the given value.   (length: { is: 6 })
+		
+  8). numericality
+  -> This helper validates that your attributes have only numeric values. 
+  -> By default, it will match an optional sign followed by an integer or floating point number.
+  
+  	eg:- validates :form_id, presence: true, numericality: { only_integer: true }
+  	  :- validates :age, presence: true, numericality: {greater_than_or_equal_to: 30, even: true }
+  	
+  	-> other options
+  		:greater_than ,:greater_than_or_equal_to ,:equal_to ,:less_than ,:less_than_or_equal_to ,:other_than ,:in ,:odd ,:even 
+  		
+  NOTE :- By default, numericality doesn't allow nil values. You can use allow_nil: true option to permit it.
+  
+  9). absence
+  -> This helper validates that the specified attributes are absent. 
+  -> It uses the present? method to check if the value is not either nil or a blank string, 
+  -> that is, a string that is either empty or consists of whitespace.
+  
+  	eg:- validates :mobile, absence: true
+  	
+  10). uniqueness
+  -> This helper validates that the attribute's value is unique right before the object gets saved. 
+  
+  	eg:- validates :email, confirmation: true, presence: true, uniqueness: true
+  	
+  11). validates_with
+  -> The validates_with helper takes a class, or a list of classes to use for validation. 
+  -> There is no default error message for validates_with. 
+  -> You must manually add errors to the record's errors collection in the validator class.
+  -> we can add the user define validation in model file or can make separate folder for this validation. 
+  
+  	eg:-      class NameValidator < ActiveModel::Validator     #create validation
+		    def validate(record)
+		      if record.name == "neeraj"
+			record.errors.add :name, "can't be neeraj"
+		      end
+		    end
+		  end
+
+		  validates_with NameValidator     #calling created validation 
+		  
+  12). validates_each
+  -> This helper validates attributes against a block. 
+  -> It doesn't have a predefined validation function. 
+  -> You should create one using a block, and every attribute passed to validates_each will be tested against it.
+  -> The block receives the record, the attribute's name, and the attribute's value.
+  
+  	eg:-    validates_each :name do |record, attr, value|   #check for name start with capital letter.
+    		  record.errors.add(attr, 'must start with upper case') if value =~ /\A[[:lower:]]/
+  		end
+  		
+ ------------------------------------------------------------------------------------------------------------------------------------
+ 							   Common Validation Options
+ 							   
+ 1). allow_nil
+ -> The :allow_nil option skips the validation when the value being validated is nil.
+ 
+ 	eg:- validates :salary, numericality: { only_integer: true }, allow_nil: true
+ 	
+ 2). allow_blank
+ -> The :allow_blank option is similar to the :allow_nil option. 
+ -> This option will let validation pass if the attribute's value is blank?, like nil or an empty string.
+ 
+ eg:- validates :identity, inclusion: { in: %w(aadhar_card pan_card driving_license),message: "%{value} is invalid"},  allow_blank: true
+ 
+ 3). message
+ -> As you've already seen, the :message option lets you specify the message that will be added to the errors collection 
+ -> when validation fails. When this option is not used, 
+ -> Active Record will use the respective default error message for each validation helper. The :message option accepts a String.
+ 
+ 	eg:- validates :name, presence: { message: "must be given please" } 
+ 	
+ 4). on
+ -> The :on option lets you specify when the validation should happen. 
+ -> The default behavior for all the built-in validation helpers is to be run on save (both when you're creating a new record 
+ -> and when you're updating it).
+ -> on: :create to run the validation only when a new record is created 
+ -> on: :update to run the validation only when a record is updated.
+ 
+ 	eg:- validates :email, confirmation: true, presence: true, uniqueness: true, on: :create
+ 	
+ 5). Strict Validations
+ -> You can also specify validations to be strict and raise ActiveModel::StrictValidationFailed when the object is invalid.
+ 	
+ 	eg:- validates :email_confirmation, presence: { strict: true }  #must be present
+ 	
+ ------------------------------------------------------------------------------------------------------------------------------------
+ 					 		   Conditional Validation
+ 
+-> Sometimes it will make sense to validate an object only when a given predicate is satisfied. 
+-> You can do that by using the :if and :unless options, which can take a symbol, a Proc or an Array. 
+-> :if option when you want to specify when the validation should happen. 
+-> when the validation should not happen, then you may use the :unless option.
+
+ 1). Using a Symbol and proc with :if and :unless
+ 
+-> You can associate the :if and :unless options with a symbol corresponding to the name of a method that will get called right before validation happens.
+	
+       :- #if payment type is card then card number required
+          validates :card_number, presence: true, if: :paid_with_card?
+
+	  def paid_with_card?
+	    payment_type == "card"
+	  end
+	  
+	:- proc is used to write an inline condition instead of a separate method.
+	 validates :password, confirmation: true, unless: Proc.new { |a| a.password.blank? }
+	 
+ 2). Grouping Conditional validations
+ 
+ -> Sometimes it is useful to have multiple validations use one condition. It can be easily achieved using with_options.
+ 
+ 	     :-   with_options if: :paid_with_card? do |a|              #if card is present then this validation must be satisfied.
+		    a.validates :card_number, length: { minimum: 10 }
+		    a.validates :salary, presence: true
+		  end
+		  
+	-> All validations inside of the with_options block will have automatically passed the condition if: :paid_with_card?
+	
+-------------------------------------------------------------------------------------------------------------------------------------
+							Performing Custom Validations
+
+-> Email validation using validates_each with regular expression.
+
+	:-        validates_each :email do |record, attribute, value|          # validating email
+		    unless value =~ /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
+		      record.errors.add(attribute, "is not correct or valid")
+		    end
+		  end
+		  
+ -> Custom Methods for salary validation:-
+ 
+ 	:-	  def salary_can_not_be_less_than_10000     #Custom Methods for salary validation
+		    if salary < 10000
+		      errors.add(:salary, "can't be less than 10000")
+		    end
+		  end
+		  
+		  calling :-   validate :salary_can_not_be_less_than_10000
+		  
+---------------------------------------------------------------------------------------------------------------------------------
+							Working with Validation Errors
+							
+ 1). person.errors.full_messages  :- showing all possible error for person variable.
+ 2). person.errors[:name] :- checking name for error. if error present in collection, then error will throw else through empty array for error.
+ 
+ 3). person.errors.where(:name)  :- showing all error for the name attribute.
+ 4). errors.clear
+	-> The clear method is used when you intentionally want to clear the errors collection.
+   note -> when the next time you call valid? or any method that tries to save this object to the database, the validations will run again. If any of the validations fail, the errors collection will be filled again. 
+   
+   	:- person.errors.clear
+   	
+  5). errors.size
+	-> The size method returns the total number of errors for the object. 
+	
+	:- person.errors.size
